@@ -1,0 +1,15 @@
+{
+    "git.ignoreLimitWarning": true,
+    "javascript.validate.enable": false,
+    "javascript.format.enable": false,
+    "javascript.preferences.quoteStyle": "single",
+    "typescript.preferences.quoteStyle": "single",
+    "prettier.singleQuote": true,
+    "prettier.printWidth": 100,
+    "tslint.nodePath": "node_modules/tslint",
+    "tslint.configFile": "./tslint.json",
+    "tslint.autoFixOnSave": true,
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  }
+  

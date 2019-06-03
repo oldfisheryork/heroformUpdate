@@ -1,6 +1,7 @@
 import * as React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
+
 import InputForm from './components/InputForm';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import DisplayTable from './components/DisplayTable';

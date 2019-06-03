@@ -37,6 +37,7 @@ class InputForm extends React.Component {
         case 'clientTask': {
           try {
             const trylist = JSON.parse(e.target.value);
+
             if (Array.isArray(trylist)) {
               this.setState({ clientTask: trylist });
             }
@@ -80,6 +81,7 @@ class InputForm extends React.Component {
                     onInput={this.onInputChange}
                   />
                 </div>
+
                 <div>
                   <label htmlFor="heroNum">Hero number</label>
                   <input
@@ -90,6 +92,7 @@ class InputForm extends React.Component {
                     onInput={this.onInputChange}
                   />
                 </div>
+
                 <div>
                   <label htmlFor="weekNum">Week Num</label>
                   <input
@@ -111,6 +114,7 @@ class InputForm extends React.Component {
                     onInput={this.onInputChange}
                   />
                 </div>
+
                 <div>
                   <label htmlFor="weekdayHours">Weekday hours</label>
                   <input
@@ -121,6 +125,7 @@ class InputForm extends React.Component {
                     onInput={this.onInputChange}
                   />
                 </div>
+
               </form>
             </div>
 
@@ -138,6 +143,7 @@ class InputForm extends React.Component {
             </div>
           </div>
         </div>
+
         {/* <div>State: {JSON.stringify(this.state)}</div>
         <div>{JSON.stringify(!!this.state.clientTask)}</div>
         <div>{JSON.stringify(!!this.state.heroNum)}</div>

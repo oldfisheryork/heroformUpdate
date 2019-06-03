@@ -160,7 +160,7 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
 
 
 # input the total work plan to get the detailed work
-def get_full_allocation_list(total_work_plan):
+def get_full_allocation_list(total_work_plan, weekday_hrs):
     list_middle_output = []
 
     for list_value in total_work_plan:
@@ -175,9 +175,9 @@ def get_full_allocation_list(total_work_plan):
                 pair_first = list_value[i][0]
                 pair_second = list_value[i][1]
 
-                while pair_first >= 8:
-                    list_output_value.append([day, 8 - remain_hours, pair_second])
-                    pair_first = pair_first - (8 - remain_hours)
+                while pair_first >= weekday_hrs:
+                    list_output_value.append([day, weekday_hrs - remain_hours, pair_second])
+                    pair_first = pair_first - (weekday_hrs - remain_hours)
                     remain_hours = 0
                     day += 1
                 if pair_first != 0:
@@ -232,8 +232,8 @@ def get_hero_client_relation(total_work_plan):
 
 
 # generate excel table
-def generate_table(file_name, list1, list2, weeks_num):
-    titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * weeks_num
+# def generate_table(file_name, list1, list2, weeks_num):
+#     titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * weeks_num
 
     # output = open(file_name, 'w', encoding='gbk')
     #
@@ -264,13 +264,14 @@ def generate_table(file_name, list1, list2, weeks_num):
     # output.close()
 
 
-def calculate(clientTask, heroNum, weekNum, dayPerWeek, weekdayHours):
-    filtered_client_arr = filter_client_arr(clientTask, heroNum, weekNum, dayPerWeek, weekdayHours)
-    total_work_plan = get_total_work_plan(filtered_client_arr, heroNum, weekNum, dayPerWeek, weekdayHours)
+def calculate(client_task, hero_num, week_num, day_per_week, weekday_hrs):
+    filtered_client_arr = filter_client_arr(client_task, hero_num, week_num, day_per_week, weekday_hrs)
+    total_work_plan = get_total_work_plan(filtered_client_arr, hero_num, week_num, day_per_week, weekday_hrs)
+    
     print(total_work_plan)
 
     # get the work plan for each hero
-    detailed_work_plan = get_full_allocation_list(total_work_plan)
+    detailed_work_plan = get_full_allocation_list(total_work_plan, weekday_hrs)
     print(detailed_work_plan)
 
     hero_client_relation = get_hero_client_relation(total_work_plan)
@@ -298,7 +299,7 @@ if __name__ == '__main__':
 
     week_num = 4
     days_per_week = 5
-    weekday_hrs = 8
+    weekday_hrs = 6
 
     file_name = 'results.xls'
 
@@ -308,11 +309,16 @@ if __name__ == '__main__':
     print(total_work_plan)
 
     # get the work plan for each hero
-    detailed_work_plan = get_full_allocation_list(total_work_plan)
+    detailed_work_plan = get_full_allocation_list(total_work_plan, weekday_hrs)
     print(detailed_work_plan)
 
     hero_client_relation=get_hero_client_relation(total_work_plan)
     print(hero_client_relation)
 
+    print()
+    print()
+
+    # print(calculate(client_arr, hero_num, week_num, days_per_week, weekday_hrs))
+
     # generate excel file
-    generate_table(file_name, detailed_work_plan, hero_client_relation, week_num)
+    # generate_table(file_name, detailed_work_plan, hero_client_relation, week_num)

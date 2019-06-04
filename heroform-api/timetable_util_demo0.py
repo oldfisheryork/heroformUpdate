@@ -122,8 +122,6 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
     print("We still have {} heroes".format(hero_num))
     print()
 
-    small_heroes = []
-
     # for every hero
     for hero_id in range(total_hero_num - hero_num, total_hero_num):
         print("Hero id is: {}".format(hero_id))
@@ -134,16 +132,11 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
 
         # flag is to calculate in this iteration how many clients has been finished
         flag = 0
-
         for i in range(total_client_num - finished_client_num):
             # remain_request = rest_client_arr[i]
 
             remain_request = client_tuple_list[i][0]
-            print("least client is: {}".format(client_tuple_list[total_client_num - finished_client_num - 1][0]))
-
-            # when it's has 8 more but [2, 1] finished still have 6 to push into smalled heroes
-
-            if rest >= remain_request > 0:
+            if rest >= remain_request:
                 rest -= remain_request
                 # finishd one client
                 flag += 1
@@ -154,43 +147,11 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
                 one_work.append(client_tuple_list[i][1])
 
                 work_plan[hero_id].append(one_work)
-
                 # rest_client_arr[i] = 0
                 client_tuple_list[i][0] = 0
 
-            if rest > 0 and i == total_client_num - finished_client_num - 1:
-                small_one = [rest, hero_id]
-                small_heroes.append(small_one)
-
-            # if rest < client_tuple_list[total_client_num - finished_client_num - flag - 1][0]:
-            #     small_one = [rest, hero_id]
-            #     small_heroes.append(small_one)
-            #     break
-
-
-            # here should push the small available work to the list
-
-
-            # if rest >= remain_request:
-            #     rest -= remain_request
-            #     # finishd one client
-            #     flag += 1
-            #
-            #     ########## very important #2nd client id#####
-            #     one_work = []
-            #     one_work.append(client_tuple_list[i][0])
-            #     one_work.append(client_tuple_list[i][1])
-            #
-            #     work_plan[hero_id].append(one_work)
-            #
-            #     # rest_client_arr[i] = 0
-            #     client_tuple_list[i][0] = 0
-            #
-            # # here should push the small available work to the list
-            # elif rest < remain_request and rest < client_tuple_list[total_client_num - finished_client_num - 1][0]:
-            #     small_one = [rest, hero_id]
-            #     small_heroes.append(small_one)
-            #     break
+            elif rest < remain_request and rest < client_tuple_list[total_client_num - finished_client_num - 1][0]:
+                break
 
         finished_client_num += flag
 
@@ -198,57 +159,8 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
         client_tuple_list.sort(key=operator.itemgetter(0), reverse=True)
 
         print("Individual allocation is: {}".format(work_plan[hero_id]))
-        print("Smaller heroes is: {}".format(small_heroes))
         print("The rest clients need to be allocated is: {}".format(client_tuple_list))
         print()
-
-    # test
-    print("small heroes list is: ")
-
-    small_heroes.sort(key=operator.itemgetter(0), reverse=True)
-    print(small_heroes)
-
-    # print(finished_client_num)
-    print("client_tuple_list is : ")
-    print(client_tuple_list)
-
-    updated_work_plan = allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan)
-
-    return updated_work_plan
-
-
-def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
-
-    while client_tuple_list[0][0] > 0 and len(small_heroes) > 0:
-        current_client_need = client_tuple_list[0][0]
-        current_cliend_id = client_tuple_list[0][1]
-        current_hero_load = small_heroes[0][0]
-        current_hero_id = small_heroes[0][1]
-
-        smaller_one = current_client_need if current_client_need <= current_hero_load else current_hero_load
-        client_tuple_list[0][0] -= smaller_one
-        client_tuple_list.sort(key=operator.itemgetter(0), reverse=True)
-
-        work_plan[current_hero_id].append([smaller_one, current_cliend_id])
-
-        if smaller_one == current_hero_load:
-            del small_heroes[0]
-        else:
-            small_heroes[0][0]-=smaller_one
-            small_heroes.sort(key=operator.itemgetter(0), reverse=True)
-
-
-        # if current_client_need >= current_hero_load:
-        #     work_plan[current_hero_id].append([current_hero_load, current_cliend_id])
-        #     client_tuple_list[0][0] -= current_hero_load
-        #     small_heroes.sort(key=operator.itemgetter(0), reverse=True)
-        #     del small_heroes[0]
-        #     client_tuple_list.sort(key=operator.itemgetter(0), reverse=True)
-        #
-        # elif len(small_heroes) == 1 and client_tuple_list[0][0] <= small_heroes[0][0]:
-        #     work_plan[current_hero_id].append([current_client_need, current_cliend_id])
-        #     del small_heroes[0]
-        #     client_tuple_list[0][0] = 0
 
     return work_plan
 
@@ -269,7 +181,7 @@ def get_full_allocation_list(total_work_plan, weekday_hrs):
                 pair_first = list_value[i][0]
                 pair_second = list_value[i][1]
 
-                while pair_first >= weekday_hrs - remain_hours:
+                while pair_first >= weekday_hrs:
                     list_output_value.append([day, weekday_hrs - remain_hours, pair_second])
                     pair_first = pair_first - (weekday_hrs - remain_hours)
                     remain_hours = 0
@@ -326,36 +238,36 @@ def get_hero_client_relation(total_work_plan):
 
 
 # generate excel table
-# def generate_table(file_name, list1, list2, week_num):
-#     titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * week_num
-#
-#     output = open(file_name, 'w', encoding='gbk')
-#
-#     output.write('Detailed work allocation for this month: \n')
-#
-#     output.write('\t')
-#     output.write(titles)
-#     output.write('\n')
-#
-#     for i in range(len(list1)):
-#             for j in range(len(list1[i])):
-#                 pass
-#                 output.write(str(list1[i][j]))    #write函数不能写int类型的参数，所以使用str()转化
-#                 output.write('\t')   #相当于Tab一下，换一个单元格
-#             output.write('\n')       #写完一行立马换行
-#
-#     output.write('\n')  # 写完一行立马换行
-#
-#     # print the table for Hero-client relation
-#     output.write('\nHero-Client relation is: \n')
-#
-#     for m in range(len(list2)):
-#             for n in range(len(list2[m])):
-#                 output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
-#                 output.write('\t')   #相当于Tab一下，换一个单元格
-#             output.write('\n')       #写完一行立马换行
-#
-#     output.close()
+# def generate_table(file_name, list1, list2, weeks_num):
+#     titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * weeks_num
+
+    # output = open(file_name, 'w', encoding='gbk')
+    #
+    # output.write('Detailed work allocation for this month: \n')
+    #
+    # output.write('\t')
+    # output.write(titles)
+    # output.write('\n')
+    #
+    # for i in range(len(list1)):
+    #         for j in range(len(list1[i])):
+    #             pass
+    #         #     output.write(str(list1[i][j]))    #write函数不能写int类型的参数，所以使用str()转化
+    #         #     output.write('\t')   #相当于Tab一下，换一个单元格
+    #         # output.write('\n')       #写完一行立马换行
+
+    # output.write('\n')  # 写完一行立马换行
+    #
+    # # print the table for Hero-client relation
+    # output.write('\nHero-Client relation is: \n')
+    #
+    # for m in range(len(list2)):
+    #         for n in range(len(list2[m])):
+    #             output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
+    #             output.write('\t')   #相当于Tab一下，换一个单元格
+    #         output.write('\n')       #写完一行立马换行
+    #
+    # output.close()
 
 
 def calculate(client_task, hero_num, week_num, day_per_week, weekday_hrs):
@@ -377,55 +289,23 @@ def calculate(client_task, hero_num, week_num, day_per_week, weekday_hrs):
 if __name__ == '__main__':
     # very good test case, since all 960 960 but in the end algo can'e solve 18 more hrs
     # client_arr = [179, 160, 150, 80, 70, 60, 50, 42, 40, 32, 28, 25, 18, 16, 10]
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 8
 
-    # too little client request
+    # normal test case
 
-    client_arr = [179, 160, 150, 80, 70, 62, 50, 45, 39, 32, 28, 25, 16, 10]
-    hero_num = 10
-    week_num = 5
-    days_per_week = 5
-    weekday_hrs = 6
+    # client_arr = [179, 160, 150, 80, 70, 62, 50, 45, 39, 32, 28, 25, 16, 10]
 
-
-
-    # lots of clients with only little work test case
+    # little amount work test case
     # client_arr = [25, 22, 20, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 10]
-    # # used to be no good
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 8
-
-    # allocation is good
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 6
-
 
     # exceeded workload should
-    # more than heroes can handle, just crop the client list to be the same as heroes
     # client_arr = [320, 190, 179, 160, 150, 80, 70, 60, 50, 42, 40, 32, 28, 25, 18, 16, 10]
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 8
 
     # good test case, finally still have 19 hrs need to be done but no one allocated, hero6 hero7 should do the rest of them
-    # client_arr = [176, 174, 143, 80, 70]
-    # hero_num = 8
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 4
-
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 8
+    client_arr = [179, 160, 150, 80, 70]
+    hero_num = 8
+    week_num = 4
+    days_per_week = 5
+    weekday_hrs = 8
 
     file_name = 'results.xls'
 
@@ -447,4 +327,4 @@ if __name__ == '__main__':
     # print(calculate(client_arr, hero_num, week_num, days_per_week, weekday_hrs))
 
     # generate excel file
-    generate_table(file_name, detailed_work_plan, hero_client_relation, week_num)
+    # generate_table(file_name, detailed_work_plan, hero_client_relation, week_num)

@@ -69,25 +69,27 @@ def get_full_allocation_list(total_work_plan, weekday_hrs):
     return list_output
 
 
-def formulate_allocation_list(full_allocation_list, weekdays_num):
+# add [] to the back
+def add_back_boring_days(full_allocation_list, weekdays_num):
 
     for each_hero_plan in full_allocation_list:
         hero_now_total_real_weekdays = len(each_hero_plan) - 1
         boring_day_num = weekdays_num - hero_now_total_real_weekdays
 
         while boring_day_num > 0:
+            # add [] if it's boring days
             each_hero_plan.append([])
             boring_day_num -= 1
 
-        print("real weekdays is; {}".format(hero_now_total_real_weekdays))
+        # print("real weekdays is; {}".format(hero_now_total_real_weekdays))
+        #
+        # print(each_hero_plan)
+        # print("---------------------------\n")
 
-        print(each_hero_plan)
-        print("---------------------------\n")
-
-    for i in full_allocation_list:
-        print("modified allocation is : \n")
-        print(i)
-        print('\n')
+    # for i in full_allocation_list:
+    #     print("modified allocation is : \n")
+    #     print(i)
+    #     print('\n')
 
     return full_allocation_list
 
@@ -101,6 +103,10 @@ def add_front_start_date(first_day_id, total_work_plan):
         for _ in range(num_blank):
             each_hero_plan.insert(1, [])
     print('Updated total work plan is: ', total_work_plan)
+
+
+# merge to the final list
+def merge_final_allocation_list():
 
 
 total_work_plan_2 =[['Hero 0', [174, 0]],
@@ -125,6 +131,6 @@ first_day_id = 2
 # weekdays_num1 = 20
 
 full_allocation_list = get_full_allocation_list(total_work_plan_2, weekday_hrs)
-formulated_allocation_list = formulate_allocation_list(full_allocation_list, weekdays_num2)
+formulated_allocation_list = add_back_boring_days(full_allocation_list, weekdays_num2)
 
 add_front_start_date(first_day_id, formulated_allocation_list)

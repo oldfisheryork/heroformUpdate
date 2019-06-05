@@ -15,8 +15,6 @@ import calendar
 # if math.floor [399, 199, 109, 108, 89, 49, 43]
 
 
-
-
 # import numpy as np
 # start = dt.date( 2019, 6, 5)
 # end = dt.date( 2019, 6, 6)
@@ -41,7 +39,7 @@ import calendar
 # function to how many workdays between start date and end date
 # return total_weekdays_num, month_num, workdays_month_plan
 def get_weekdays_num_month(start_year, start_month, start_day, end_year, end_month, end_day):
-    weekdays_num_month = []
+    weekdays_num_month_list = []
 
     total_workdays_num = wd.networkdays(dt.date(start_year, start_month, start_day), dt.date(end_year, end_month, end_day))
     print("total weekdays between is: {}".format(total_workdays_num))
@@ -80,17 +78,21 @@ def get_weekdays_num_month(start_year, start_month, start_day, end_year, end_mon
             else:
                 finish_day = last_day_month
 
-            month_workdays = wd.networkdays(dt.date(now_year, now_month, begin_day), dt.date(now_year, now_month, finish_day))
+            # how many weekdays in this month
+            month_num_weekdays = wd.networkdays(dt.date(now_year, now_month, begin_day), dt.date(now_year, now_month, finish_day))
 
             # data structure is: current year, current month and total weekdays in this month of the year
-            now_month_plan = [now_year, now_month, month_workdays]
-            weekdays_num_month.append(now_month_plan)
+            now_month_plan = [now_year, now_month, month_num_weekdays]
 
-            print("The number of workdays this month is: {}\n".format(month_workdays))
+            # a list, show the month and how many weekdays
+            weekdays_num_month_list.append(now_month_plan)
 
-    month_num = len(weekdays_num_month)
+            print("The number of weekdays in this month is: {}\n".format(month_num_weekdays))
 
-    return total_workdays_num, month_num, weekdays_num_month
+    # how many months in during the time
+    month_num = len(weekdays_num_month_list)
+
+    return total_workdays_num, month_num, weekdays_num_month_list
 
 
 # make the new client list every month by scaling factor
@@ -155,6 +157,7 @@ def get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month,
 # for i in range(6):
 #     print(new_arr[i] / client_arr[i])
 
+
 # for small cases
 def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
 
@@ -179,8 +182,9 @@ def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
     return work_plan
 
 
-# also will allocation_for_small_heroes
+# use allocation_for_small_heroes to calculate
 # the total work plan is for the month
+# roughly list of [hero_name, [1hrs, client1], [2hrs, client2],...]
 def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
     current_hero_id = 0
 
@@ -292,7 +296,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
             # remain_request = rest_client_arr[i]
 
             remain_request = client_tuple_list[i][0]
-            print("least client is: {}".format(client_tuple_list[total_client_num - finished_client_num - 1][0]))
+            # print("least client is: {}".format(client_tuple_list[total_client_num - finished_client_num - 1][0]))
 
             # when it's has 8 more but [2, 1] finished still have 6 to push into smalled heroes
 
@@ -341,6 +345,8 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
 
 
 # get the detailed allocation list
+# each month plan rough plan as input
+# to the every day
 def get_full_allocation_list(total_work_plan, weekday_hrs):
     list_middle_output = []
 
@@ -391,10 +397,56 @@ def get_full_allocation_list(total_work_plan, weekday_hrs):
 
     return list_output
 
+# only the function be used when it's the first period of time to deal with
+# if it's the starting month of the whole period
+def add_front_start_date(first_day_id, final_final_allocation_list):
+    if first_day_id > 4:
+        return final_final_allocation_list
+
+    num_blank = first_day_id
+
+    for each_hero_plan in final_final_allocation_list:
+        for _ in range(num_blank):
+            each_hero_plan.insert(1, [])
+
+    print('Updated total work plan is: \n', final_final_allocation_list)
+
+    return final_final_allocation_list
+
+
+# add [] to the back
+def add_back_boring_days(full_allocation_list, weekdays_num):
+    for each_hero_plan in full_allocation_list:
+        hero_now_total_real_weekdays = len(each_hero_plan) - 1
+        boring_day_num = weekdays_num - hero_now_total_real_weekdays
+
+        while boring_day_num > 0:
+            # add [] if it's boring days
+            each_hero_plan.append([])
+            boring_day_num -= 1
+
+        # print("real weekdays is; {}".format(hero_now_total_real_weekdays))
+        #
+        # print(each_hero_plan)
+        # print("---------------------------\n")
+
+    # for i in full_allocation_list:
+    #     print("modified allocation is : \n")
+    #     print(i)
+    #     print('\n')
+
+    return full_allocation_list
+
+
+# merge to the final list
+def merge_final_allocation_list():
+    pass
+
 
 # generate excel table
 def generate_table(file_name, list1):
-    week_num = math.ceil(len(list1[0][0]) / 5)
+    week_num = math.ceil((len(list1[0]) - 1) / 5)
+
     titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * week_num
 
     output = open(file_name, 'w', encoding='gbk')
@@ -428,20 +480,22 @@ def generate_table(file_name, list1):
 
 if __name__ == '__main__':
     start_year = 2019
-    start_month = 6
+    start_month = 1
     start_day = 1
 
     end_year = 2019
-    end_month = 7
+    end_month = 3
     end_day = 31
 
-    client_list = [320, 190, 179, 160, 150, 80, 70, 60, 50, 42, 40, 32, 28, 25, 18, 16, 10]
+    client_list = [240, 50, 25, 22, 20, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 10]
 
     print("total original client request is: {}".format(sum(client_list)))
 
-    hero_num=6
+    hero_num=5
     weekday_hrs=8
 
+    # for example
+    # [43, 2, [[2019, 6, 20], [2019, 7, 23]]]
     total_weekdays, month_num, weekdays_month_plan = get_weekdays_num_month(start_year, start_month, start_day, end_year, end_month, end_day)
 
     # fixed, during the time scaled
@@ -449,26 +503,67 @@ if __name__ == '__main__':
 
     detailed_allocation_now_month = []
 
+    # this is the merged plan
+    final_final_allocation_list = []
+
+    # every_month_details such as [2019, 7, 23]
     for every_month_details in weekdays_month_plan:
         now_year = every_month_details[0]
         now_month = every_month_details[1]
+
         day_num_month = every_month_details[2]
 
+        # scaled and trimmed and trimed
         final_client_list_now_month = get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month, weekday_hrs)
 
         print("year: {}".format(now_year))
         print("month: {}".format(now_month))
+
         print("final client list this month is :{}\n".format(final_client_list_now_month))
 
+        # roughly allocation each month
         work_plan_now_month = get_total_work_plan(final_client_list_now_month, hero_num, day_num_month, weekday_hrs)
 
+        # detailed allocation each month
         detailed_allocation_now_month = get_full_allocation_list(work_plan_now_month, weekday_hrs)
 
         print("work plan this month is:\n {}\n".format(work_plan_now_month))
-        print("detailed allocation this month is:\n {}\n".format(detailed_allocation_now_month))
+
+
+        # for each month add blank if it's boring days
+        back_added_allocation_list = add_back_boring_days(detailed_allocation_now_month, day_num_month)
+        print("detailed allocation this month is:\n {}\n".format(back_added_allocation_list))
+
+        final_final_allocation_list.append(back_added_allocation_list)
+
 
         # print(work_plan_now_month)
         print("----------------------------\n")
+
+    print("\n most complete allocation plan is : \n")
+    print(final_final_allocation_list)
+
+    first_month_allocation_list = final_final_allocation_list[0]
+
+    if month_num > 1:
+        for month_id in range(1, month_num):
+            now_month_allocation_list = final_final_allocation_list[month_id]
+
+            for hero_id in range(len(now_month_allocation_list)):
+                total_allocation_days = len(now_month_allocation_list[hero_id])
+
+                for each_allocation_id in range(1, total_allocation_days):
+                    first_month_allocation_list[hero_id].append(now_month_allocation_list[hero_id][each_allocation_id])
+
+    # day_id from 0 - 6 means Monday - Sunday
+    # test_day_id = calendar.weekday(start_year, start_month, start_day)
+    # print("tested date id is :{}\n".format(test_day_id))
+    first_day_id = calendar.weekday(start_year, start_month, start_day)
+    extreme_final_list = add_front_start_date(first_day_id, first_month_allocation_list)
+    file_name = 'results.xls'
+
+    generate_table(file_name, extreme_final_list)
+
 
 
 

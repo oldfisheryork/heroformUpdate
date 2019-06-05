@@ -39,6 +39,7 @@ class DisplayTable extends Component {
   };
 
   getPlanForWeek = workPlanForMan => {
+    // how to post the name to the page
     workPlanForMan = workPlanForMan.slice(1); // get rid of name
     console.log(workPlanForMan);
     const start = this.state.currentWeek * 5;
@@ -49,6 +50,7 @@ class DisplayTable extends Component {
 
   renderWorkPlan = () => {
     return this.state.workPlan.map((plan, index) => {
+
       const planForWeek = this.getPlanForWeek(plan);
       return (
         <tr key={index}>

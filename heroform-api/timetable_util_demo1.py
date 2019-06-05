@@ -321,36 +321,36 @@ def get_hero_client_relation(total_work_plan):
 
 
 # generate excel table
-def generate_table(file_name, list1, list2, week_num):
-    titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * week_num
-
-    output = open(file_name, 'w', encoding='gbk')
-
-    output.write('Detailed work allocation for this month: \n')
-
-    output.write('\t')
-    output.write(titles)
-    output.write('\n')
-
-    for i in range(len(list1)):
-            for j in range(len(list1[i])):
-                pass
-                output.write(str(list1[i][j]))    #write函数不能写int类型的参数，所以使用str()转化
-                output.write('\t')   #相当于Tab一下，换一个单元格
-            output.write('\n')       #写完一行立马换行
-
-    output.write('\n')  # 写完一行立马换行
-
-    # print the table for Hero-client relation
-    output.write('\nHero-Client relation is: \n')
-
-    for m in range(len(list2)):
-            for n in range(len(list2[m])):
-                output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
-                output.write('\t')   #相当于Tab一下，换一个单元格
-            output.write('\n')       #写完一行立马换行
-
-    output.close()
+# def generate_table(file_name, list1, list2, week_num):
+#     titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * week_num
+#
+#     output = open(file_name, 'w', encoding='gbk')
+#
+#     output.write('Detailed work allocation for this month: \n')
+#
+#     output.write('\t')
+#     output.write(titles)
+#     output.write('\n')
+#
+#     for i in range(len(list1)):
+#             for j in range(len(list1[i])):
+#                 pass
+#                 output.write(str(list1[i][j]))    #write函数不能写int类型的参数，所以使用str()转化
+#                 output.write('\t')   #相当于Tab一下，换一个单元格
+#             output.write('\n')       #写完一行立马换行
+#
+#     output.write('\n')  # 写完一行立马换行
+#
+#     # print the table for Hero-client relation
+#     output.write('\nHero-Client relation is: \n')
+#
+#     for m in range(len(list2)):
+#             for n in range(len(list2[m])):
+#                 output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
+#                 output.write('\t')   #相当于Tab一下，换一个单元格
+#             output.write('\n')       #写完一行立马换行
+#
+#     output.close()
 
 
 def calculate(client_task, hero_num, week_num, day_per_week, weekday_hrs):

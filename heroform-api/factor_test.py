@@ -4,34 +4,156 @@ import datetime as dt
 import workdays as wd
 import calendar
 
+# def get_date():
+# client_arr = [600, 320, 176, 174, 143, 80, 70]
+# hero_num=5
+# weekday_hrs=8
+# total_days=300
+# month_num=12
+
+# if math.ceil  [400, 200, 110, 109, 90, 50, 44]
+# if math.floor [399, 199, 109, 108, 89, 49, 43]
+
+
+
+
+# import numpy as np
+# start = dt.date( 2019, 6, 5)
+# end = dt.date( 2019, 6, 6)
+#
+# days = np.busday_count(start, end)
+# print("June in 2019 business days is: ")
+
+# test how many days betweeen date
+
+
+# day_id from 0 - 6 means Monday - Sunday
+# test_day_id = calendar.weekday(start_year, start_month, start_day)
+# print("tested date id is :{}\n".format(test_day_id))
+
+
+# get the day of the date in this month
+# last_date_this_month = calendar.monthrange(2019, 6)[1]
+# print(last_date_this_month)
+# last_date_start_month = calendar.monthrange(start_year, start_month)[1]
+
+
+# function to how many workdays between start date and end date
+# return total_weekdays_num, month_num, workdays_month_plan
+def get_weekdays_num_month(start_year, start_month, start_day, end_year, end_month, end_day):
+    weekdays_num_month = []
+
+    total_workdays_num = wd.networkdays(dt.date(start_year, start_month, start_day), dt.date(end_year, end_month, end_day))
+    print("total weekdays between is: {}".format(total_workdays_num))
+
+    for now_year in range(start_year, end_year + 1):
+        if start_year < end_year:
+            first_month_year = 1
+            last_month_year = 12
+
+            if now_year == start_year:
+                begin_month = start_month
+            else:
+                begin_month = first_month_year
+
+            if now_year == end_year:
+                finish_month = end_month
+            else:
+                finish_month = last_month_year
+        else:
+            begin_month = start_month
+            finish_month = end_month
+
+        for now_month in range(begin_month, finish_month + 1):
+            print("month is {}".format(now_month))
+
+            first_day_month = 1
+            last_day_month = calendar.monthrange(now_year, now_month)[1]
+
+            if now_year == start_year and now_month == start_month:
+                begin_day = start_day
+            else:
+                begin_day = first_day_month
+
+            if now_year == end_year and now_month == end_month:
+                finish_day = end_day
+            else:
+                finish_day = last_day_month
+
+            month_workdays = wd.networkdays(dt.date(now_year, now_month, begin_day), dt.date(now_year, now_month, finish_day))
+
+            # data structure is: current year, current month and total weekdays in this month of the year
+            now_month_plan = [now_year, now_month, month_workdays]
+            weekdays_num_month.append(now_month_plan)
+
+            print("The number of workdays this month is: {}\n".format(month_workdays))
+
+    month_num = len(weekdays_num_month)
+
+    return total_workdays_num, month_num, weekdays_num_month
+
+
+# make the new client list every month by scaling factor
+# every client list is the same
+# return scaled_client_list
+def get_scaled_client_list(client_list, month_num, total_days, hero_num, weekday_hrs):
+    scaled_client_list = []
+    available_heroes_total = hero_num * total_days * weekday_hrs
+
+    client_month_request = sum(client_list)
+    client_total_request = month_num * client_month_request
+
+    # get the scale_factor
+    if available_heroes_total < client_total_request:
+        scale_factor = available_heroes_total / client_total_request
+
+        print("scale factor is: ")
+        print(scale_factor)
+        for each_client in client_list:
+            # use math.floor to find the right request
+            new_each_client = math.ceil(scale_factor * each_client)
+            scaled_client_list.append(new_each_client)
+    else:
+        scaled_client_list = client_list
+
+    print("scaled client list is : {}\n".format(scaled_client_list))
+
+    return scaled_client_list
+
+
 # filter and get the final client list
 # trimmed the client array is workload is more than heroes availability
-# def filter_client_arr(input_list, hero_num, week_num, days_per_week, weekday_hrs):
-#     output_list = []
-#
-#     available_load = hero_num * week_num * days_per_week * weekday_hrs
-#
-#     client_request = sum(input_list)
-#
-#     if available_load >= client_request:
-#         output_list = input_list
-#     else:
-#         for each_client in input_list:
-#
-#             if available_load >= each_client:
-#                 output_list.append(each_client)
-#                 available_load -= each_client
-#             else:
-#                 output_list.append(available_load)
-#                 break
-#
-#     # print(sum(output_list))
-#
-#     return output_list
+# trimmed the client list for specific month
+# return final_client_list_now_month
+def get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month, weekday_hrs):
+    final_client_list_now_month = []
+
+    available_load = hero_num * day_num_month * weekday_hrs
+
+    client_request = sum(scaled_client_list)
+
+    if available_load >= client_request:
+        final_client_list_now_month = scaled_client_list
+    else:
+        for each_client in scaled_client_list:
+            if available_load >= each_client:
+                final_client_list_now_month.append(each_client)
+                available_load -= each_client
+            else:
+                final_client_list_now_month.append(available_load)
+                break
+
+    # print(sum(final_client_list_now_month))
+
+    return final_client_list_now_month
 
 
-# get the total work plan
+# print(get_weekdays_num_month(start_year, start_month, start_day, end_year, end_month, end_day))
 
+# new_arr = get_scaled_client_list(client_arr, total_days, hero_num, weekday_hrs, month_num)
+
+# for i in range(6):
+#     print(new_arr[i] / client_arr[i])
 
 # for small cases
 def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
@@ -58,7 +180,8 @@ def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
 
 
 # also will allocation_for_small_heroes
-def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_hrs):
+# the total work plan is for the month
+def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
     current_hero_id = 0
 
     total_client_num = len(client_arr)
@@ -87,7 +210,7 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
 
     # test case if there's too little work, we need to
     # total_each_hero = 5 * 8 * weeks_num * (541 / 960)
-    total_each_hero = weekday_hrs * days_per_week * week_num
+    total_each_hero = weekday_hrs * day_num_month
 
     total_available = hero_num * total_each_hero
 
@@ -192,36 +315,6 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
                 small_one = [rest, hero_id]
                 small_heroes.append(small_one)
 
-            # if rest < client_tuple_list[total_client_num - finished_client_num - flag - 1][0]:
-            #     small_one = [rest, hero_id]
-            #     small_heroes.append(small_one)
-            #     break
-
-
-            # here should push the small available work to the list
-
-
-            # if rest >= remain_request:
-            #     rest -= remain_request
-            #     # finishd one client
-            #     flag += 1
-            #
-            #     ########## very important #2nd client id#####
-            #     one_work = []
-            #     one_work.append(client_tuple_list[i][0])
-            #     one_work.append(client_tuple_list[i][1])
-            #
-            #     work_plan[hero_id].append(one_work)
-            #
-            #     # rest_client_arr[i] = 0
-            #     client_tuple_list[i][0] = 0
-            #
-            # # here should push the small available work to the list
-            # elif rest < remain_request and rest < client_tuple_list[total_client_num - finished_client_num - 1][0]:
-            #     small_one = [rest, hero_id]
-            #     small_heroes.append(small_one)
-            #     break
-
         finished_client_num += flag
 
         # ########## very important ####2nd sort######
@@ -247,7 +340,7 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
     return updated_work_plan
 
 
-# input the total work plan to get the detailed work
+# get the detailed allocation list
 def get_full_allocation_list(total_work_plan, weekday_hrs):
     list_middle_output = []
 
@@ -299,29 +392,9 @@ def get_full_allocation_list(total_work_plan, weekday_hrs):
     return list_output
 
 
-# input the total work plan and get the hero-client relation
-def get_hero_client_relation(total_work_plan):
-    list_output = []
-    for hero_id in range(len(total_work_plan)):
-        sub_list = []
-        hero_name = total_work_plan[hero_id][0]
-        sub_list.append(hero_name)
-
-        client_num = len(total_work_plan[hero_id]) - 1
-
-        if client_num <= 0:
-            continue
-
-        for i in range(client_num):
-            client_id = total_work_plan[hero_id][i+1][1]
-            sub_list.append(client_id)
-
-        list_output.append(sub_list)
-    return list_output
-
-
 # generate excel table
-def generate_table(file_name, list1, list2, week_num):
+def generate_table(file_name, list1):
+    week_num = math.ceil(len(list1[0][0]) / 5)
     titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * week_num
 
     output = open(file_name, 'w', encoding='gbk')
@@ -341,107 +414,61 @@ def generate_table(file_name, list1, list2, week_num):
 
     output.write('\n')  # 写完一行立马换行
 
-    # print the table for Hero-client relation
-    output.write('\nHero-Client relation is: \n')
-
-    for m in range(len(list2)):
-            for n in range(len(list2[m])):
-                output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
-                output.write('\t')   #相当于Tab一下，换一个单元格
-            output.write('\n')       #写完一行立马换行
+    # # print the table for Hero-client relation
+    # output.write('\nHero-Client relation is: \n')
+    #
+    # for m in range(len(list2)):
+    #         for n in range(len(list2[m])):
+    #             output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
+    #             output.write('\t')   #相当于Tab一下，换一个单元格
+    #         output.write('\n')       #写完一行立马换行
 
     output.close()
 
 
-def calculate(client_task, hero_num, week_num, day_per_week, weekday_hrs):
-    filtered_client_arr = filter_client_arr(client_task, hero_num, week_num, day_per_week, weekday_hrs)
-    total_work_plan = get_total_work_plan(filtered_client_arr, hero_num, week_num, day_per_week, weekday_hrs)
-    
-    print(total_work_plan)
-
-    # get the work plan for each hero
-    detailed_work_plan = get_full_allocation_list(total_work_plan, weekday_hrs)
-    print(detailed_work_plan)
-
-    hero_client_relation = get_hero_client_relation(total_work_plan)
-    print(hero_client_relation)
-
-    return (detailed_work_plan, hero_client_relation)
-
-
-
 if __name__ == '__main__':
-    # very good test case, since all 960 960 but in the end algo can'e solve 18 more hrs
-    # client_arr = [179, 160, 150, 80, 70, 60, 50, 42, 40, 32, 28, 25, 18, 16, 10]
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 8
+    start_year = 2019
+    start_month = 6
+    start_day = 1
 
-    # too little client request
+    end_year = 2019
+    end_month = 7
+    end_day = 31
 
-    # client_arr = [179, 160, 150, 80, 70, 62, 50, 45, 39, 32, 28, 25, 16, 10]
-    # hero_num = 10
-    #
-    # week_num = 5
-    # days_per_week = 5
-    # weekday_hrs = 6
-    #
+    client_list = [320, 190, 179, 160, 150, 80, 70, 60, 50, 42, 40, 32, 28, 25, 18, 16, 10]
+
+    print("total original client request is: {}".format(sum(client_list)))
+
+    hero_num=6
+    weekday_hrs=8
+
+    total_weekdays, month_num, weekdays_month_plan = get_weekdays_num_month(start_year, start_month, start_day, end_year, end_month, end_day)
+
+    # fixed, during the time scaled
+    scaled_client_list=get_scaled_client_list(client_list, month_num, total_weekdays, hero_num, weekday_hrs)
+
+    detailed_allocation_now_month = []
+
+    for every_month_details in weekdays_month_plan:
+        now_year = every_month_details[0]
+        now_month = every_month_details[1]
+        day_num_month = every_month_details[2]
+
+        final_client_list_now_month = get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month, weekday_hrs)
+
+        print("year: {}".format(now_year))
+        print("month: {}".format(now_month))
+        print("final client list this month is :{}\n".format(final_client_list_now_month))
+
+        work_plan_now_month = get_total_work_plan(final_client_list_now_month, hero_num, day_num_month, weekday_hrs)
+
+        detailed_allocation_now_month = get_full_allocation_list(work_plan_now_month, weekday_hrs)
+
+        print("work plan this month is:\n {}\n".format(work_plan_now_month))
+        print("detailed allocation this month is:\n {}\n".format(detailed_allocation_now_month))
+
+        # print(work_plan_now_month)
+        print("----------------------------\n")
 
 
-    # lots of clients with only little work test case
-    client_arr = [25, 22, 20, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 10]
-    # used to be no good
-    hero_num = 6
-    week_num = 4
-    days_per_week = 5
-    weekday_hrs = 8
 
-    # allocation is good
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 6
-
-
-    # exceeded workload should
-    # more than heroes can handle, just crop the client list to be the same as heroes
-    # client_arr = [320, 190, 179, 160, 150, 80, 70, 60, 50, 42, 40, 32, 28, 25, 18, 16, 10]
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 8
-
-    # good test case, finally still have 19 hrs need to be done but no one allocated, hero6 hero7 should do the rest of them
-    # client_arr = [176, 174, 143, 80, 70]
-    # hero_num = 8
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 4
-
-    # hero_num = 6
-    # week_num = 4
-    # days_per_week = 5
-    # weekday_hrs = 8
-
-    file_name = 'results.xls'
-
-    filtered_client_arr = filter_client_arr(client_arr, hero_num, week_num, days_per_week, weekday_hrs)
-
-    total_work_plan = get_total_work_plan(filtered_client_arr, hero_num, week_num, days_per_week, weekday_hrs)
-    print(total_work_plan)
-
-    # get the work plan for each hero
-    detailed_work_plan = get_full_allocation_list(total_work_plan, weekday_hrs)
-    print(detailed_work_plan)
-
-    hero_client_relation=get_hero_client_relation(total_work_plan)
-    print(hero_client_relation)
-
-    print()
-    print()
-
-    # print(calculate(client_arr, hero_num, week_num, days_per_week, weekday_hrs))
-
-    # generate excel file
-    generate_table(file_name, detailed_work_plan, hero_client_relation, week_num)

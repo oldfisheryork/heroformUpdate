@@ -3,6 +3,7 @@ import math
 import datetime as dt
 import workdays as wd
 import calendar
+from ordered_set import OrderedSet
 
 # def get_date():
 # client_arr = [600, 320, 176, 174, 143, 80, 70]
@@ -19,9 +20,6 @@ import calendar
 # start = dt.date( 2019, 6, 5)
 # end = dt.date( 2019, 6, 6)
 #
-# days = np.busday_count(start, end)
-# print("June in 2019 business days is: ")
-
 # test how many days betweeen date
 
 
@@ -397,6 +395,7 @@ def get_full_allocation_list(total_work_plan, weekday_hrs):
 
     return list_output
 
+
 # only the function be used when it's the first period of time to deal with
 # if it's the starting month of the whole period
 def add_front_start_date(first_day_id, final_final_allocation_list):
@@ -425,16 +424,6 @@ def add_back_boring_days(full_allocation_list, weekdays_num):
             each_hero_plan.append([])
             boring_day_num -= 1
 
-        # print("real weekdays is; {}".format(hero_now_total_real_weekdays))
-        #
-        # print(each_hero_plan)
-        # print("---------------------------\n")
-
-    # for i in full_allocation_list:
-    #     print("modified allocation is : \n")
-    #     print(i)
-    #     print('\n')
-
     return full_allocation_list
 
 
@@ -444,7 +433,7 @@ def merge_final_allocation_list():
 
 
 # generate excel table
-def generate_table(file_name, list1):
+def generate_table(file_name, list1, list2):
     week_num = math.ceil((len(list1[0]) - 1) / 5)
 
     titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * week_num
@@ -466,55 +455,49 @@ def generate_table(file_name, list1):
 
     output.write('\n')  # 写完一行立马换行
 
-    # # print the table for Hero-client relation
-    # output.write('\nHero-Client relation is: \n')
-    #
-    # for m in range(len(list2)):
-    #         for n in range(len(list2[m])):
-    #             output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
-    #             output.write('\t')   #相当于Tab一下，换一个单元格
-    #         output.write('\n')       #写完一行立马换行
+    # print the table for Hero-client relation
+    output.write('\nHero-Client relation is: \n')
+
+    for m in range(len(list2)):
+            for n in range(len(list2[m])):
+                output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
+                output.write('\t')   #相当于Tab一下，换一个单元格
+            output.write('\n')       #写完一行立马换行
 
     output.close()
 
 
-if __name__ == '__main__':
-    start_year = 2019
-    start_month = 1
-    start_day = 1
-
-    end_year = 2019
-    end_month = 3
-    end_day = 31
-
-    client_list = [240, 50, 25, 22, 20, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 10]
-
-    print("total original client request is: {}".format(sum(client_list)))
-
-    hero_num=5
-    weekday_hrs=8
-
+# get extreme final allocation list
+# relation list
+def get_extreme_final_list(client_list, hero_num, weekday_hrs,
+                           start_year, start_month, start_day, end_year, end_month, end_day):
     # for example
     # [43, 2, [[2019, 6, 20], [2019, 7, 23]]]
-    total_weekdays, month_num, weekdays_month_plan = get_weekdays_num_month(start_year, start_month, start_day, end_year, end_month, end_day)
+    total_weekdays, month_num, weekdays_month_plan = get_weekdays_num_month(start_year, start_month, start_day,
+                                                                            end_year, end_month, end_day)
 
     # fixed, during the time scaled
-    scaled_client_list=get_scaled_client_list(client_list, month_num, total_weekdays, hero_num, weekday_hrs)
+    scaled_client_list = get_scaled_client_list(client_list, month_num, total_weekdays, hero_num, weekday_hrs)
 
     detailed_allocation_now_month = []
 
     # this is the merged plan
     final_final_allocation_list = []
 
+    relation_set_list = []
+    for i in range(hero_num):
+        sub_set = OrderedSet()
+        relation_set_list.append(sub_set)
+
     # every_month_details such as [2019, 7, 23]
     for every_month_details in weekdays_month_plan:
         now_year = every_month_details[0]
         now_month = every_month_details[1]
-
         day_num_month = every_month_details[2]
 
         # scaled and trimmed and trimed
-        final_client_list_now_month = get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month, weekday_hrs)
+        final_client_list_now_month = get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month,
+                                                                      weekday_hrs)
 
         print("year: {}".format(now_year))
         print("month: {}".format(now_month))
@@ -523,12 +506,23 @@ if __name__ == '__main__':
 
         # roughly allocation each month
         work_plan_now_month = get_total_work_plan(final_client_list_now_month, hero_num, day_num_month, weekday_hrs)
+        print("work plan this month is:\n {}\n".format(work_plan_now_month))
+
+        for i in range(hero_num):
+            hero_name = work_plan_now_month[i][0]
+            relation_set_list[i].add(hero_name)
+
+            client_num = len(work_plan_now_month[i]) - 1
+
+            if client_num <= 0:
+                continue
+
+            for client_id in range(client_num):
+                relation_set_list[i].add(work_plan_now_month[i][client_id + 1][1])
+
 
         # detailed allocation each month
         detailed_allocation_now_month = get_full_allocation_list(work_plan_now_month, weekday_hrs)
-
-        print("work plan this month is:\n {}\n".format(work_plan_now_month))
-
 
         # for each month add blank if it's boring days
         back_added_allocation_list = add_back_boring_days(detailed_allocation_now_month, day_num_month)
@@ -536,9 +530,19 @@ if __name__ == '__main__':
 
         final_final_allocation_list.append(back_added_allocation_list)
 
-
         # print(work_plan_now_month)
         print("----------------------------\n")
+
+    final_relation_list = []
+    for hero_id in range(hero_num):
+        sub_list = []
+        current_sub_set = relation_set_list[hero_id]
+        for ele in current_sub_set:
+            sub_list.append(ele)
+        final_relation_list.append(sub_list)
+
+    print("\nfinal relation list is: \n")
+    print(final_relation_list)
 
     print("\n most complete allocation plan is : \n")
     print(final_final_allocation_list)
@@ -546,6 +550,7 @@ if __name__ == '__main__':
     first_month_allocation_list = final_final_allocation_list[0]
 
     if month_num > 1:
+        # in every month
         for month_id in range(1, month_num):
             now_month_allocation_list = final_final_allocation_list[month_id]
 
@@ -559,11 +564,73 @@ if __name__ == '__main__':
     # test_day_id = calendar.weekday(start_year, start_month, start_day)
     # print("tested date id is :{}\n".format(test_day_id))
     first_day_id = calendar.weekday(start_year, start_month, start_day)
+
     extreme_final_list = add_front_start_date(first_day_id, first_month_allocation_list)
+
+    print("\n extreme_final_list is :\n")
+    print(extreme_final_list)
+
+    return extreme_final_list, final_relation_list
+
+
+# def get_hero_client_relation(extreme_fiinal_list):
+#     list_output = []
+#
+#     for hero_id in range(len(extreme_fiinal_list)):
+#         sub_list = []
+#         sub_set = OrderedSet()
+#
+#         hero_name = extreme_fiinal_list[hero_id][0]
+#         sub_set.add(hero_name)
+#
+#         client_num = len(extreme_fiinal_list[hero_id]) - 1
+#
+#         if client_num <= 0:
+#             continue
+#
+#         for i in range(client_num):
+#
+#             if not extreme_fiinal_list[hero_id][i + 1]:
+#                 continue
+#
+#             client_id = extreme_fiinal_list[hero_id][i + 1][1]
+#
+#             sub_set.add(client_id)
+#
+#         for ele in sub_set:
+#             sub_list.append(ele)
+#
+#         list_output.append(sub_list)
+#     return list_output
+
+
+def add_dates_to_extreme_final_list(extreme_final_list, start_year, start_month, start_day, end_year, end_month, end_day):
+    pass
+
+
+if __name__ == '__main__':
+    start_year = 2019
+    start_month = 7
+    start_day = 1
+
+    end_year = 2019
+    end_month = 7
+    end_day = 31
+
+    client_list = [240, 50, 25, 22, 20, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 10]
+
+    print("total original client request is: {}".format(sum(client_list)))
+
+    hero_num=5
+    weekday_hrs=8
+
+    extreme_final_list, hero_client_list = get_extreme_final_list(client_list, hero_num, weekday_hrs,
+                           start_year, start_month, start_day, end_year, end_month, end_day)
+
+    # hero_client_list = get_hero_client_relation(extreme_final_list)
+
     file_name = 'results.xls'
 
-    generate_table(file_name, extreme_final_list)
-
-
+    generate_table(file_name, extreme_final_list, hero_client_list)
 
 

@@ -8,6 +8,8 @@ class DisplayTable extends Component {
     currentWeek: 0
   };
 
+  // no viriable
+  // why we have this function ?
   componentDidMount = () => {
     const data = this.props.location.state;
     if (data && data.clientRelation) {
@@ -18,14 +20,18 @@ class DisplayTable extends Component {
       this.setState({ workPlan: data.workPlan });
       if (data.workPlan[0]) {
         let len = data.workPlan[0].length - 1;
+        // weeks definition
         let weeks = Math.ceil(len / 5);
         this.setState({ weeks });
       }
     }
   };
 
+  // no variable
   renderHeroClient = () => {
+    //  what does map mean ?
     let x = this.state.heroClient.map((listElement, index) => {
+      //  here why tr ? , index is what ?
       return (
         <tr key={index}>
           <th scope="row">{index + 1}</th>
@@ -40,22 +46,32 @@ class DisplayTable extends Component {
 
   getPlanForWeek = workPlanForMan => {
     // how to post the name to the page
+    // workPlanForMan是某个hero的list，只不过去掉了名字
     workPlanForMan = workPlanForMan.slice(1); // get rid of name
+
     console.log(workPlanForMan);
+
     const start = this.state.currentWeek * 5;
     const end = start + 5;
+    // 取到相应部分，当前list指定起始位置
     const row = workPlanForMan.slice(start, end);
+    // 只返回这五个结果
     return row;
   };
 
   renderWorkPlan = () => {
     return this.state.workPlan.map((plan, index) => {
-
+      // 这里index是list的id吗
+      // plan指的是某个hero的list
+      // planForWeek是这周工作安排
       const planForWeek = this.getPlanForWeek(plan);
+
       return (
-        <tr key={index}>
-          <th scope="row">{index + 1}</th>
+        <tr key = {index} >
+          <th scope="row">{index + 1}</th>{/**/}
+            {/*plan[0]就是某个hero名字*/}
           <td>{plan[0]}</td>
+            {/*对planForWeek这五个值, index类似循环里的编号，item具体planForWeek每个元素*/}
           {planForWeek.map((item, index) => (
             <td key={index}>{JSON.stringify(item)}</td>
           ))}
@@ -65,12 +81,17 @@ class DisplayTable extends Component {
   };
 
   render() {
+    // 这儿写const 什么之类，取数组元素
+
     return (
       <>
         <div className="container">
           <h3>Work Plan</h3>
+
+
           <table className="table">
             <thead>
+
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
@@ -80,17 +101,30 @@ class DisplayTable extends Component {
                 <th scope="col">Thu</th>
                 <th scope="col">Fri</th>
               </tr>
+
+              {/*should I write it here ? */}
+              <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">Mon</th>
+                <th scope="col">Tue</th>
+                <th scope="col">Wed</th>
+                <th scope="col">Thu</th>
+                <th scope="col">Fri</th>
+              </tr>
+
             </thead>
             <tbody>{this.renderWorkPlan()}</tbody>
           </table>
+
 
           <div>
             <p>Total weeks: {this.state.weeks}</p>
             <p>Current week: {this.state.currentWeek + 1}</p>
           </div>
 
-          <div>
 
+          <div>
             <button
               type="button"
               // class="btn btn-dark"
@@ -119,10 +153,13 @@ class DisplayTable extends Component {
             >
               Next Week
             </button>
-
           </div>
+
         </div>
-          <br></br>
+
+
+        <br></br>
+
 
         <div className="container">
           <h3>Client Relation:</h3>
@@ -130,6 +167,8 @@ class DisplayTable extends Component {
             <tbody>{this.renderHeroClient()}</tbody>
           </table>
         </div>
+
+
       </>
     );
   }

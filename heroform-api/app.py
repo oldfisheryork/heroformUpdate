@@ -17,11 +17,19 @@ def heroform():
     client_task = request.json['clientTask']
 
     hero_num = int(request.json['heroNum'])
-    week_num = int(request.json['weekNum'])
-    days_per_week = int(request.json['dayPerWeek'])
+
     weekday_hours = int(request.json['weekdayHours'])
 
-    detailed_work_plan, hero_client_relation = calculate(client_task, hero_num, week_num, days_per_week, weekday_hours)
+    ###updated###
+    start_year = int(request.json['startDateYear'])
+    start_month = int(request.json['startDateMonth'])
+    start_day = int(request.json['startDateDay'])
+    end_year = int(request.json['endDateYear'])
+    end_month = int(request.json['endDateMonth'])
+    end_day = int(request.json['endDateDay'])
+
+    detailed_work_plan, hero_client_relation = calculate(client_task, hero_num, weekday_hours,
+                                                         start_year, start_month, start_day, end_year, end_month, end_day)
 
     return jsonify({'workPlan': detailed_work_plan, 'clientRelation': hero_client_relation})
 

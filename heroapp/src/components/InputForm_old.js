@@ -235,8 +235,8 @@ class InputForm extends React.Component {
 
   handleFocusChange = focusedInput => this.setState({ focusedInput });
 
-  // handleDateChange = ({ startDate, endDate }) =>
-  //   this.setState({ startDate, endDate });
+  handleDateChange = ({ startDate, endDate }) =>
+    this.setState({ startDate, endDate });
 
   isOutsideRange = () => false;
 
@@ -298,23 +298,16 @@ class InputForm extends React.Component {
 
   handleDateChange = ({ startDate, endDate }) => {
     if (startDate) {
-      var d = new Date(startDate);
-      this.setState({startDate: startDate});
-      this.setState({startDateMonth: d.getMonth() + 1});
-      this.setState({startDateYear: d.getFullYear()});
-      this.setState({startDateDay: d.getDate()});
-
-    };
+      this.setState({
+        startDate
+      });
+    }
 
     if (endDate) {
-      var dd = new Date(endDate);
       this.setState({
-        endDate : endDate,
-        endDateMonth: dd.getMonth() + 1,
-        endDateYear: dd.getFullYear(),
-        endDateDay: dd.getDate()
+        endDate
       });
-    };
+    }
   };
 
   render() {
@@ -402,14 +395,13 @@ class InputForm extends React.Component {
         </div>
 
         {/*why have stringify ?*/}
-        {/*<div>State: {JSON.stringify(this.state)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.clientTask)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.heroNum)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.weekdayHours)}</div>*/}
+        <div>State: {JSON.stringify(this.state)}</div>
+        <div>{JSON.stringify(!!this.state.clientTask)}</div>
+        <div>{JSON.stringify(!!this.state.heroNum)}</div>
+        <div>{JSON.stringify(!!this.state.weekdayHours)}</div>
 
-        {/*<div>{JSON.stringify(!!this.state.startDate)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.endDate)}</div>*/}
-        {/*<div>{JSON.stringify(this.state.startDateDay)}</div>*/}
+        <div>{JSON.stringify(!!this.state.startDate)}</div>
+        <div>{JSON.stringify(!!this.state.endDate)}</div>
       </>
     );
   }

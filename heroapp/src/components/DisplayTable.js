@@ -103,15 +103,15 @@ class DisplayTable extends Component {
               </tr>
 
               {/*should I write it here ? */}
-              <tr>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col">Mon</th>
-                <th scope="col">Tue</th>
-                <th scope="col">Wed</th>
-                <th scope="col">Thu</th>
-                <th scope="col">Fri</th>
-              </tr>
+              {/*<tr>*/}
+                {/*<th scope="col"></th>*/}
+                {/*<th scope="col"></th>*/}
+                {/*<th scope="col">Mon</th>*/}
+                {/*<th scope="col">Tue</th>*/}
+                {/*<th scope="col">Wed</th>*/}
+                {/*<th scope="col">Thu</th>*/}
+                {/*<th scope="col">Fri</th>*/}
+              {/*</tr>*/}
 
             </thead>
             <tbody>{this.renderWorkPlan()}</tbody>

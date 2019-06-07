@@ -13,19 +13,62 @@ class InputForm extends React.Component {
     clientTask: null,
     heroNum: null,
     weekdayHours: null,
-
+    // .format('YYYY-MM-DD')
     startDate: moment(),
+      // .format('YYYY-MM-DD')
     endDate: moment().subtract(-1, "year"),
 
     focusedInput: null,
 
-    startDateMonth: null,
     startDateYear: null,
+    startDateMonth: null,
     startDateDay: null,
-    endDateMonth: null,
+
     endDateYear: null,
+    endDateMonth: null,
     endDateDay: null
   };
+
+
+  // componentWillMount () {
+  //
+  //   if (this.state.startDate) {
+  //     var d = new Date(this.state.startDate);
+  //     this.setState({startDateMonth: d.getMonth() + 1});
+  //     this.setState({startDateYear: d.getFullYear()});
+  //     this.setState({startDateDay: d.getDate()});
+  //   };
+  //
+  //   if (this.state.endDate) {
+  //     var dd = new Date(this.state.endDate);
+  //     this.setState({
+  //       endDateMonth: dd.getMonth() + 1,
+  //       endDateYear: dd.getFullYear(),
+  //       endDateDay: dd.getDate()
+  //     });
+  //   };
+  // };
+
+
+  //  it works to initialize the state
+  //  in constructor, better use this.state rather than this.setState()
+  constructor () {
+    super();
+    var d = new Date(this.state.startDate);
+    var dd = new Date(this.state.endDate);
+
+    this.state = {
+        startDate: this.state.startDate,
+        endDate: this.state.endDate,
+        startDateMonth: d.getMonth() + 1,
+        startDateYear: d.getFullYear(),
+        startDateDay: d.getDate(),
+        endDateMonth: dd.getMonth() + 1,
+        endDateYear: dd.getFullYear(),
+        endDateDay: dd.getDate()
+    };
+  };
+
 
   handleFocusChange = focusedInput => this.setState({ focusedInput });
 
@@ -34,6 +77,25 @@ class InputForm extends React.Component {
 
   isOutsideRange = () => false;
 
+  handleDateChange = ({ startDate, endDate }) => {
+    if (startDate) {
+      var d = new Date(startDate);
+      this.setState({startDate: startDate});
+      this.setState({startDateMonth: d.getMonth() + 1});
+      this.setState({startDateYear: d.getFullYear()});
+      this.setState({startDateDay: d.getDate()});
+    };
+
+    if (endDate) {
+      var dd = new Date(endDate);
+      this.setState({
+        endDate : endDate,
+        endDateMonth: dd.getMonth() + 1,
+        endDateYear: dd.getFullYear(),
+        endDateDay: dd.getDate()
+      });
+    };
+  };
 
   // 每次点击Go按钮就submit，调submitForm
   // 重点是submit传到后台吗?
@@ -90,26 +152,6 @@ class InputForm extends React.Component {
     }
   };
 
-  handleDateChange = ({ startDate, endDate }) => {
-    if (startDate) {
-      var d = new Date(startDate);
-      this.setState({startDate: startDate});
-      this.setState({startDateMonth: d.getMonth() + 1});
-      this.setState({startDateYear: d.getFullYear()});
-      this.setState({startDateDay: d.getDate()});
-
-    };
-
-    if (endDate) {
-      var dd = new Date(endDate);
-      this.setState({
-        endDate : endDate,
-        endDateMonth: dd.getMonth() + 1,
-        endDateYear: dd.getFullYear(),
-        endDateDay: dd.getDate()
-      });
-    };
-  };
 
   render() {
 
@@ -162,11 +204,13 @@ class InputForm extends React.Component {
                   <br />
 
                   <DateRangePicker
+                    displayFormat="MMM DD YYYY"
                     startDateId="startDate"
                     endDateId="endDate"
 
                     startDate={this.state.startDate}
                     endDate={this.state.endDate}
+
 
                     onDatesChange={this.handleDateChange}
                     focusedInput={this.state.focusedInput}
@@ -196,14 +240,14 @@ class InputForm extends React.Component {
         </div>
 
         {/*why have stringify ?*/}
-        {/*<div>State: {JSON.stringify(this.state)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.clientTask)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.heroNum)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.weekdayHours)}</div>*/}
+        <div>State: {JSON.stringify(this.state)}</div>
+        <div>{JSON.stringify(!!this.state.clientTask)}</div>
+        <div>{JSON.stringify(!!this.state.heroNum)}</div>
+        <div>{JSON.stringify(!!this.state.weekdayHours)}</div>
 
-        {/*<div>{JSON.stringify(!!this.state.startDate)}</div>*/}
-        {/*<div>{JSON.stringify(!!this.state.endDate)}</div>*/}
-        {/*<div>{JSON.stringify(this.state.startDateDay)}</div>*/}
+        <div>{JSON.stringify(!!this.state.startDate)}</div>
+        <div>{JSON.stringify(!!this.state.endDate)}</div>
+        <div>{JSON.stringify(this.state.startDateDay)}</div>
       </>
     );
   }

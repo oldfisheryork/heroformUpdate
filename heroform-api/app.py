@@ -28,10 +28,12 @@ def heroform():
     end_month = int(request.json['endDateMonth'])
     end_day = int(request.json['endDateDay'])
 
-    detailed_work_plan, hero_client_relation = calculate(client_task, hero_num, weekday_hours,
+    scale_factor, detailed_work_plan, hero_client_relation = calculate(client_task, hero_num, weekday_hours,
                                                          start_year, start_month, start_day, end_year, end_month, end_day)
 
-    return jsonify({'workPlan': detailed_work_plan, 'clientRelation': hero_client_relation})
+    return jsonify({'scaleFactor': scale_factor,
+                    'workPlan': detailed_work_plan,
+                    'clientRelation': hero_client_relation})
 
 
 if __name__ == '__main__':

@@ -106,10 +106,11 @@ def get_scaled_client_list(client_list, month_num, total_days, hero_num, weekday
 
     # get the scale_factor
     if available_heroes_total < client_total_request:
+        # ------------------
         scale_factor = available_heroes_total / client_total_request
 
-        print("scale factor is: ")
-        print(scale_factor)
+        print("\nscale factor is: \n {}".format(scale_factor))
+
         for each_client in client_list:
             # use math.floor to find the right request
             new_each_client = math.ceil(scale_factor * each_client)
@@ -119,7 +120,7 @@ def get_scaled_client_list(client_list, month_num, total_days, hero_num, weekday
 
     print("scaled client list is : {}\n".format(scaled_client_list))
 
-    return scaled_client_list
+    return scale_factor, scaled_client_list
 
 
 # filter and get the final client list
@@ -167,7 +168,9 @@ def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
         current_hero_id = small_heroes[0][1]
 
         smaller_one = current_client_need if current_client_need <= current_hero_load else current_hero_load
+
         client_tuple_list[0][0] -= smaller_one
+
         client_tuple_list.sort(key=operator.itemgetter(0), reverse=True)
 
         work_plan[current_hero_id].append([smaller_one, current_cliend_id])
@@ -175,7 +178,7 @@ def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
         if smaller_one == current_hero_load:
             del small_heroes[0]
         else:
-            small_heroes[0][0]-=smaller_one
+            small_heroes[0][0] -= smaller_one
             small_heroes.sort(key=operator.itemgetter(0), reverse=True)
 
     return work_plan
@@ -274,7 +277,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
 
 
     # second round , for every hero
-    print("\n-----The rest of clients task is: {} ------".format(client_tuple_list))
+    # print("\n-----The rest of clients task is: {} ------".format(client_tuple_list))
     print("We still have {} heroes".format(hero_num))
     print()
 
@@ -282,7 +285,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
 
     # for every hero
     for hero_id in range(total_hero_num - hero_num, total_hero_num):
-        print("Hero id is: {}".format(hero_id))
+
         rest = total_each_hero
 
         # for every hero's work plan
@@ -292,6 +295,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
         flag = 0
 
         for i in range(total_client_num - finished_client_num):
+
             # remain_request = rest_client_arr[i]
 
             remain_request = client_tuple_list[i][0]
@@ -318,25 +322,29 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
                 small_one = [rest, hero_id]
                 small_heroes.append(small_one)
 
+        # so far is right
+        print("\nWork plan is : \n{}\n".format(work_plan))
+
         finished_client_num += flag
 
         # ########## very important ####2nd sort######
         client_tuple_list.sort(key=operator.itemgetter(0), reverse=True)
 
-        print("Individual allocation is: {}".format(work_plan[hero_id]))
-        print("Smaller heroes is: {}".format(small_heroes))
-        print("The rest clients need to be allocated is: {}".format(client_tuple_list))
-        print()
+        # print("Individual allocation is: {}".format(work_plan[hero_id]))
+        # print("Smaller heroes is: {}".format(small_heroes))
+        # print("The rest clients need to be allocated is: {}\n".format(client_tuple_list))
+
 
     # test
-    print("small heroes list is: ")
+    # print("small heroes list is: ")
 
     small_heroes.sort(key=operator.itemgetter(0), reverse=True)
-    print(small_heroes)
+
+    # print(small_heroes)
 
     # print(finished_client_num)
-    print("client_tuple_list is : ")
-    print(client_tuple_list)
+    # print("client_tuple_list is : ")
+    # print(client_tuple_list)
 
     updated_work_plan = allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan)
 
@@ -347,54 +355,95 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
 # each month plan rough plan as input
 # to the every day
 def get_full_allocation_list(total_work_plan, weekday_hrs):
+    print("\n input total work plan is : \n")
+    print(total_work_plan)
+
     list_middle_output = []
 
-    for list_value in total_work_plan:
-        print(list_value)
-        list_output_value = []
-        remain_hours = 0
-        day = 0
-        for i in range(len(list_value)):
+    for each_hero_collected_list in total_work_plan:
+        # every hero
+        print("\n every hero month rough plan is : \n")
+        print(each_hero_collected_list)
+
+        collected_day_client_list = []
+        remain_hrs = weekday_hrs
+        
+        now_month_day_id = 0
+        for i in range(len(each_hero_collected_list)):
+            # i = 0 , hero name 
             if i == 0:
-                list_output_value.append(list_value[i])
+                collected_day_client_list.append(each_hero_collected_list[i])
+            # real work 
             else:
-                pair_first = list_value[i][0]
-                pair_second = list_value[i][1]
+                now_client_request = each_hero_collected_list[i][0]
+                now_client_id = each_hero_collected_list[i][1]
+                if remain_hrs <= now_client_request:
+                    while now_client_request >= remain_hrs:
+                        collected_day_client_list.append([now_month_day_id, remain_hrs, now_client_id])
+                        now_client_request -= remain_hrs
+                        remain_hrs = weekday_hrs
+                        now_month_day_id += 1
 
-                while pair_first >= weekday_hrs - remain_hours:
-                    list_output_value.append([day, weekday_hrs - remain_hours, pair_second])
-                    pair_first = pair_first - (weekday_hrs - remain_hours)
-                    remain_hours = 0
-                    day += 1
-                if pair_first != 0:
-                    list_output_value.append([day, pair_first, pair_second])
-                    remain_hours = pair_first
-        list_middle_output.append(list_output_value)
-
-    list_output = []
-
-    for list_value in list_middle_output:
-        pre_day = -1
-        list_output_value = []
-        for i in range(len(list_value)):
-            if i == 0:
-                list_output_value.append(list_value[i])
-            else:
-                set_first = list_value[i][0]
-                set_second = list_value[i][1]
-                set_third = list_value[i][2]
-                if pre_day == set_first:
-                    combine_element = []
-                    remove_element = list_output_value.pop()
-                    combine_element.append(remove_element)
-                    combine_element.append([set_second, set_third])
-                    list_output_value.append(combine_element)
                 else:
-                    list_output_value.append([set_second, set_third])
-                pre_day = set_first
-        list_output.append(list_output_value)
+                    collected_day_client_list.append([now_month_day_id, now_client_request, now_client_id])
+                    remain_hrs -= now_client_request
+                    now_client_request = 0
 
-    return list_output
+        list_middle_output.append(collected_day_client_list)
+
+    print("\n list middle output is : \n")
+    print(list_middle_output)
+
+    merged_by_day_allocation_list = []
+
+    # every hero work list
+    for each_hero_collected_list in list_middle_output:
+        pre_day = -1
+
+        merged_day_client_list = []
+
+        # i is each chunk of work id
+        for i in range(len(each_hero_collected_list)):
+            if i == 0:
+                merged_day_client_list.append(each_hero_collected_list[0])
+            # all the real work
+            else:
+                now_day_id = each_hero_collected_list[i][0]
+                task_load = each_hero_collected_list[i][1]
+                client_id = each_hero_collected_list[i][2]
+
+                if pre_day == now_day_id:
+
+                    new_element = [task_load, client_id]
+
+                    last_ele = merged_day_client_list[-1]
+
+                    test_ele = last_ele[0]
+                    # already a list
+                    if isinstance(test_ele, (list,)):
+                        merged_day_client_list[-1].append(new_element)
+                    # not a list
+                    else:
+                        del merged_day_client_list[-1]
+                        combined_list = []
+                        combined_list.append(last_ele)
+                        combined_list.append(new_element)
+                        merged_day_client_list.append(combined_list)
+                # different day_id
+                else:
+                    merged_day_client_list.append([task_load, client_id])
+
+                pre_day = now_day_id
+
+        print("\n list output value is : \n")
+        print(merged_day_client_list)
+
+        merged_by_day_allocation_list.append(merged_day_client_list)
+
+    print("\nmerged to everyday allocation list is : \n")
+    print(merged_by_day_allocation_list)
+
+    return merged_by_day_allocation_list
 
 
 # only the function be used when it's the first period of time to deal with
@@ -473,7 +522,7 @@ def calculate(client_list, hero_num, weekday_hrs,
                                                                             end_year, end_month, end_day)
 
     # fixed, during the time scaled
-    scaled_client_list = get_scaled_client_list(client_list, month_num, total_weekdays, hero_num, weekday_hrs)
+    scale_factor, scaled_client_list = get_scaled_client_list(client_list, month_num, total_weekdays, hero_num, weekday_hrs)
 
     detailed_allocation_now_month = []
 
@@ -498,11 +547,12 @@ def calculate(client_list, hero_num, weekday_hrs,
         print("year: {}".format(now_year))
         print("month: {}".format(now_month))
 
-        print("final client list this month is :{}\n".format(final_client_list_now_month))
+        print("\n scaled and trimed client list in this month is :{}\n".format(final_client_list_now_month))
 
         # roughly allocation each month
         work_plan_now_month = get_total_work_plan(final_client_list_now_month, hero_num, day_num_month, weekday_hrs)
-        print("work plan this month is:\n {}\n".format(work_plan_now_month))
+
+        # print("\n roughly work plan this month is:\n {}\n".format(work_plan_now_month))
 
         for i in range(hero_num):
             hero_name = work_plan_now_month[i][0]
@@ -522,6 +572,7 @@ def calculate(client_list, hero_num, weekday_hrs,
 
         # for each month add blank if it's boring days
         back_added_allocation_list = add_back_boring_days(detailed_allocation_now_month, day_num_month)
+
         print("detailed allocation this month is:\n {}\n".format(back_added_allocation_list))
 
         final_final_allocation_list.append(back_added_allocation_list)
@@ -566,7 +617,7 @@ def calculate(client_list, hero_num, weekday_hrs,
     print("\n extreme_final_list is :\n")
     print(extreme_final_list)
 
-    return extreme_final_list, final_relation_list
+    return scale_factor, extreme_final_list, final_relation_list
 
 
 def add_dates_to_extreme_final_list(extreme_final_list, start_year, start_month, start_day, end_year, end_month, end_day):
@@ -579,15 +630,41 @@ if __name__ == '__main__':
     start_day = 1
 
     end_year = 2020
-    end_month = 6
-    end_day = 30
+    end_month = 7
+    end_day = 31
 
-    client_list = [240, 50, 25, 22, 20, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 10]
+    client_list = [50, 25, 22, 20,
+                   19, 19, 19, 19, 19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,
+                   19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                   19, 19, 19,
+                   19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                   19, 19, 19,
+                   19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                   19, 19, 19,
+                   19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                   19, 19, 19,
+                   19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                   19, 19, 19,
+                   18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
+                   18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
+                   18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
+                   18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
+                   18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
+                   18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+                   16, 10]
 
     print("total original client request is: {}".format(sum(client_list)))
 
-    hero_num=5
-    weekday_hrs=6
+    hero_num=2
+    weekday_hrs=8
 
     extreme_final_list, hero_client_list = calculate(client_list, hero_num, weekday_hrs,
                                                      start_year, start_month, start_day, end_year, end_month, end_day)

@@ -5,6 +5,7 @@ class DisplayTable extends Component {
     heroClient: [],
     workPlan: [],
     weeks: 0,
+    scaleFactor: 1,
     currentWeek: 0
   };
 
@@ -12,6 +13,9 @@ class DisplayTable extends Component {
   // why we have this function ?
   componentDidMount = () => {
     const data = this.props.location.state;
+    if (data && data.scaleFactor) {
+        this.setState({ scaleFactor: data.scaleFactor });
+    }
 
     if (data && data.clientRelation) {
       this.setState({ heroClient: data.clientRelation });
@@ -125,6 +129,7 @@ class DisplayTable extends Component {
 
           <div>
             <p>Total weeks: {this.state.weeks}</p>
+              <p>Scale Factor: {this.state.scaleFactor}</p>
             <p>Current week: {this.state.currentWeek + 1}</p>
           </div>
 

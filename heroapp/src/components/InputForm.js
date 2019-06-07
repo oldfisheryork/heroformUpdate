@@ -29,7 +29,7 @@ class InputForm extends React.Component {
     endDateDay: null
   };
 
-
+  // it works good but I prefer construcutor
   // componentWillMount () {
   //
   //   if (this.state.startDate) {
@@ -52,6 +52,7 @@ class InputForm extends React.Component {
 
   //  it works to initialize the state
   //  in constructor, better use this.state rather than this.setState()
+  // what's the difference if I use props as variable
   constructor () {
     super();
     var d = new Date(this.state.startDate);
@@ -200,7 +201,7 @@ class InputForm extends React.Component {
                 </div>
 
                 <div>
-                  <label htmlFor="dateRangeSelector">Date Range Selector</label>
+                  <label htmlFor="dateRangeSelector">Date Range</label>
                   <br />
 
                   <DateRangePicker

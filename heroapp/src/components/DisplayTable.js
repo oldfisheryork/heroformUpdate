@@ -12,6 +12,7 @@ class DisplayTable extends Component {
   // why we have this function ?
   componentDidMount = () => {
     const data = this.props.location.state;
+
     if (data && data.clientRelation) {
       this.setState({ heroClient: data.clientRelation });
     }
@@ -27,22 +28,6 @@ class DisplayTable extends Component {
     }
   };
 
-  // no variable
-  renderHeroClient = () => {
-    //  what does map mean ?
-    let x = this.state.heroClient.map((listElement, index) => {
-      //  here why tr ? , index is what ?
-      return (
-        <tr key={index}>
-          <th scope="row">{index + 1}</th>
-          {listElement.map((ele, i) => {
-            return <td key={i}>{ele}</td>;
-          })}
-        </tr>
-      );
-    });
-    return x;
-  };
 
   getPlanForWeek = workPlanForMan => {
     // how to post the name to the page
@@ -68,10 +53,11 @@ class DisplayTable extends Component {
 
       return (
         <tr key = {index} >
-          <th scope="row">{index + 1}</th>{/**/}
+          <th scope="row">{index}</th>
             {/*plan[0]就是某个hero名字*/}
           <td>{plan[0]}</td>
-            {/*对planForWeek这五个值, index类似循环里的编号，item具体planForWeek每个元素*/}
+
+          {/*对planForWeek这五个值, index类似循环里的编号，item具体planForWeek每个元素*/}
           {planForWeek.map((item, index) => (
             <td key={index}>{JSON.stringify(item)}</td>
           ))}
@@ -80,14 +66,33 @@ class DisplayTable extends Component {
     });
   };
 
+
+  // no variable
+  renderHeroClient = () => {
+    //  what does map mean ?
+    let x = this.state.heroClient.map((listElement, index) => {
+      //  here why tr ? , index is what ?
+      return (
+        <tr key={index}>
+          <th scope="row">{index}</th>
+          {listElement.map((ele, i) => {
+            return <td key={i}>{ele}</td>;
+          })}
+        </tr>
+      );
+    });
+    return x;
+  };
+
+
   render() {
     // 这儿写const 什么之类，取数组元素
 
     return (
       <>
         <div className="container">
+            <br></br>
           <h3>Work Plan</h3>
-
 
           <table className="table">
             <thead>

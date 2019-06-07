@@ -13,9 +13,8 @@ class InputForm extends React.Component {
     clientTask: null,
     heroNum: null,
     weekdayHours: null,
-    // .format('YYYY-MM-DD')
+
     startDate: moment(),
-      // .format('YYYY-MM-DD')
     endDate: moment().subtract(-1, "year"),
 
     focusedInput: null,
@@ -241,14 +240,16 @@ class InputForm extends React.Component {
         </div>
 
         {/*why have stringify ?*/}
-        <div>State: {JSON.stringify(this.state)}</div>
-        <div>{JSON.stringify(!!this.state.clientTask)}</div>
-        <div>{JSON.stringify(!!this.state.heroNum)}</div>
-        <div>{JSON.stringify(!!this.state.weekdayHours)}</div>
 
-        <div>{JSON.stringify(!!this.state.startDate)}</div>
-        <div>{JSON.stringify(!!this.state.endDate)}</div>
-        <div>{JSON.stringify(this.state.startDateDay)}</div>
+        {/*<div>State: {JSON.stringify(this.state)}</div>*/}
+        {/*<div>{JSON.stringify(!!this.state.clientTask)}</div>*/}
+        {/*<div>{JSON.stringify(!!this.state.heroNum)}</div>*/}
+        {/*<div>{JSON.stringify(!!this.state.weekdayHours)}</div>*/}
+
+        {/*<div>{JSON.stringify(!!this.state.startDate)}</div>*/}
+        {/*<div>{JSON.stringify(!!this.state.endDate)}</div>*/}
+        {/*<div>{JSON.stringify(this.state.startDateDay)}</div>*/}
+
       </>
     );
   }

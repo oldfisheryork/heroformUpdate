@@ -206,12 +206,12 @@
 
 import * as React from 'react';
 import axios from 'axios';
-import { config } from '../config';
+import { config } from '../../config';
 
 import { DateRangePicker } from 'react-dates';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-import '../styles.css';
+import '../../styles.css';
 import moment from 'moment';
 
 class InputForm extends React.Component {

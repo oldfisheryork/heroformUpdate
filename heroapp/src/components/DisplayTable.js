@@ -128,9 +128,9 @@ class DisplayTable extends Component {
 
 
           <div>
-            <p>Total weeks: {this.state.weeks}</p>
-              <p>Scale Factor: {this.state.scaleFactor}</p>
-            <p>Current week: {this.state.currentWeek + 1}</p>
+            <p>Scale Factor : {this.state.scaleFactor}</p>
+            <p>Total Weeks : {this.state.weeks}</p>
+            <p>Current Week : {this.state.currentWeek + 1}</p>
           </div>
 
 

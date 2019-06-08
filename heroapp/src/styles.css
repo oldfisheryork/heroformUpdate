@@ -4,7 +4,7 @@
 }
 
 .DateRangePickerInput_arrow {
-  width: 40px;
+  width: 90px;
   text-align: center;
 }
 
@@ -15,3 +15,12 @@
 .DateInput_input {
   cursor: pointer;
 }
+
+td ,th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/*.form-group {*/
+    /*padding-top: 0.5%;*/
+/*}*/

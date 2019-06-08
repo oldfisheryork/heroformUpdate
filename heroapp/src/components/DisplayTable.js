@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
+import '../styles.css';
+import moment from 'moment';
 
 class DisplayTable extends Component {
   state = {
     heroClient: [],
     workPlan: [],
     weeks: 0,
+    startDate: null,
+    endDate: null,
+    // should be a list, either this file get or from API
+    weekdayCalendar: [],
     scaleFactor: 1,
     currentWeek: 0
   };
@@ -13,8 +19,20 @@ class DisplayTable extends Component {
   // why we have this function ?
   componentDidMount = () => {
     const data = this.props.location.state;
+
+    if (data && data.weekdayCalendar) {
+        this.setState({ weekdayCalendar: data.weekdayCalendar });
+    }
+
+    if (data && data.startDate) {
+        this.setState({ startDate: moment(data.startDate).format("MMM DD, YYYY")});
+    }
+    if (data && data.endDate) {
+        this.setState({ endDate: moment(data.endDate).format("MMM DD, YYYY") });
+    }
+
     if (data && data.scaleFactor) {
-        this.setState({ scaleFactor: data.scaleFactor });
+        this.setState({scaleFactor: data.scaleFactor});
     }
 
     if (data && data.clientRelation) {
@@ -23,6 +41,7 @@ class DisplayTable extends Component {
 
     if (data && data.workPlan) {
       this.setState({ workPlan: data.workPlan });
+      // do the data processing
       if (data.workPlan[0]) {
         let len = data.workPlan[0].length - 1;
         // weeks definition
@@ -51,19 +70,19 @@ class DisplayTable extends Component {
   renderWorkPlan = () => {
     return this.state.workPlan.map((plan, index) => {
       // 这里index是list的id吗
-      // plan指的是某个hero的list
-      // planForWeek是这周工作安排
+      // plan指的是某个hero的list, contained name
+      // planForWeek是这周工作安排, no name contained
       const planForWeek = this.getPlanForWeek(plan);
 
       return (
         <tr key = {index} >
-          <th scope="row">{index}</th>
-            {/*plan[0]就是某个hero名字*/}
-          <td>{plan[0]}</td>
+          <th class="bg-light" scope="row">{index+1}</th>
+          <th class="bg-light" nowrap="nowrap">{plan[0]}</th>
 
-          {/*对planForWeek这五个值, index类似循环里的编号，item具体planForWeek每个元素*/}
           {planForWeek.map((item, index) => (
-            <td key={index}>{JSON.stringify(item)}</td>
+            <td key={index}>
+                {JSON.stringify(item)}
+            </td>
           ))}
         </tr>
       );
@@ -73,24 +92,27 @@ class DisplayTable extends Component {
 
   // no variable
   renderHeroClient = () => {
-    //  what does map mean ?
-    let x = this.state.heroClient.map((listElement, index) => {
-      //  here why tr ? , index is what ?
+    // listElement is every hero-client list it
+    return this.state.heroClient.map((listElement, index) => {
+      // get rid of name
+      const relationContent = listElement.slice(1);
       return (
-        <tr key={index}>
-          <th scope="row">{index}</th>
-          {listElement.map((ele, i) => {
+        <tr key = {index} >
+          <th class="bg-light" scope="row">{index+1}</th>
+          <th className="bg-light" nowrap="nowrap">{listElement[0]}</th>
+
+          {relationContent.map((ele, i) => {
             return <td key={i}>{ele}</td>;
           })}
         </tr>
       );
     });
-    return x;
   };
 
 
   render() {
     // 这儿写const 什么之类，取数组元素
+    const weekdayList= this.state.weekdayCalendar;
 
     return (
       <>
@@ -98,36 +120,26 @@ class DisplayTable extends Component {
             <br></br>
           <h3>Work Plan</h3>
 
-          <table className="table">
-            <thead>
-
-              <tr>
+          <table class="table">
+            <thead class="thead-light">
+               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Mon</th>
-                <th scope="col">Tue</th>
-                <th scope="col">Wed</th>
-                <th scope="col">Thu</th>
-                <th scope="col">Fri</th>
+                <th scope="col">Hero Name</th>
+                <th scope="col">{weekdayList[this.state.currentWeek * 5]}</th>
+                <th scope="col">{weekdayList[this.state.currentWeek * 5 + 1]}</th>
+                <th scope="col">{weekdayList[this.state.currentWeek * 5 + 2]}</th>
+                <th scope="col">{weekdayList[this.state.currentWeek * 5 + 3]}</th>
+                <th scope="col">{weekdayList[this.state.currentWeek * 5 + 4]}</th>
               </tr>
-
-              {/*should I write it here ? */}
-              {/*<tr>*/}
-                {/*<th scope="col"></th>*/}
-                {/*<th scope="col"></th>*/}
-                {/*<th scope="col">Mon</th>*/}
-                {/*<th scope="col">Tue</th>*/}
-                {/*<th scope="col">Wed</th>*/}
-                {/*<th scope="col">Thu</th>*/}
-                {/*<th scope="col">Fri</th>*/}
-              {/*</tr>*/}
-
             </thead>
+
             <tbody>{this.renderWorkPlan()}</tbody>
           </table>
 
 
           <div>
+            <p>Start Date : {this.state.startDate} </p>
+            <p>End Date : {this.state.endDate}</p>
             <p>Scale Factor : {this.state.scaleFactor}</p>
             <p>Total Weeks : {this.state.weeks}</p>
             <p>Current Week : {this.state.currentWeek + 1}</p>
@@ -172,9 +184,17 @@ class DisplayTable extends Component {
 
 
         <div className="container">
-          <h3>Client Relation:</h3>
+          <h3>Hero-Client Relation</h3>
+
           <table className="table">
-            <tbody>{this.renderHeroClient()}</tbody>
+              <thead className="thead-light">
+                  <tr>
+                      <th width="5%">#</th>
+                      <th width="15%">Hero Name</th>
+                      <th colspan="42">Client ID</th>
+                  </tr>
+              </thead>
+              <tbody>{this.renderHeroClient()}</tbody>
           </table>
         </div>
 

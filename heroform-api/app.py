@@ -21,6 +21,7 @@ def heroform():
     weekday_hours = int(request.json['weekdayHours'])
 
     ###updated###
+    # Fro month, already parsed into the API mode which means 1-12 other than 0-11
     start_year = int(request.json['startDateYear'])
     start_month = int(request.json['startDateMonth'])
     start_day = int(request.json['startDateDay'])
@@ -28,12 +29,18 @@ def heroform():
     end_month = int(request.json['endDateMonth'])
     end_day = int(request.json['endDateDay'])
 
-    scale_factor, detailed_work_plan, hero_client_relation = calculate(client_task, hero_num, weekday_hours,
+    start_date = request.json['startDate']
+    end_date = request.json['endDate']
+
+    weekday_calendar, scale_factor, detailed_work_plan, hero_client_relation = calculate(client_task, hero_num, weekday_hours,
                                                          start_year, start_month, start_day, end_year, end_month, end_day)
 
-    return jsonify({'scaleFactor': scale_factor,
+    return jsonify({'weekdayCalendar': weekday_calendar,
+                    'scaleFactor': scale_factor,
                     'workPlan': detailed_work_plan,
-                    'clientRelation': hero_client_relation})
+                    'clientRelation': hero_client_relation,
+                    'startDate': start_date,
+                    'endDate': end_date})
 
 
 if __name__ == '__main__':

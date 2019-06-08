@@ -463,6 +463,34 @@ def add_front_start_date(first_day_id, final_final_allocation_list):
     return final_final_allocation_list
 
 
+######## return the calendar for the weekdays dates list ####
+def get_weekday_calendar(start_year, start_month, start_day, end_year, end_month, end_day):
+    # first_day_id = calendar.weekday(start_year, start_month, start_day)
+
+    start_dt = dt.date(start_year, start_month, start_day)
+    end_dt = dt.date(end_year, end_month, end_day)
+
+    def daterange(date1, date2):
+        for n in range(int((date2 - date1).days)+1):
+            yield date1 + dt.timedelta(n)
+
+    flag = start_dt.weekday()
+    weekday_list = []
+
+    if 1 <= flag <= 4:
+        for i in range(flag):
+            weekday_list.append(calendar.day_name[i])
+
+    for each_day in daterange(start_dt, end_dt):
+        if each_day.weekday() < 5:
+            weekday_list.append(each_day.strftime("%A %x"))
+
+    # is for printing
+    # for day in weekday_list:
+    #     print(day)
+    return weekday_list
+
+
 # add [] to the back
 def add_back_boring_days(full_allocation_list, weekdays_num):
     for each_hero_plan in full_allocation_list:
@@ -478,22 +506,29 @@ def add_back_boring_days(full_allocation_list, weekdays_num):
 
 
 # generate excel table
-def generate_table(file_name, list1, list2):
+def generate_table(file_name, weekday_calendar, list1, list2):
     week_num = math.ceil((len(list1[0]) - 1) / 5)
-
-    titles = 'Monday\tTuesday\tWednesday\tThursday\tFriday\t' * week_num
 
     output = open(file_name, 'w', encoding='gbk')
 
     output.write('Detailed work allocation for this month: \n')
 
     output.write('\t')
-    output.write(titles)
+
     output.write('\n')
+
+    for i in range(len(weekday_calendar)):
+        if i == 0:
+            output.write('\t')
+        output.write(weekday_calendar[i])
+        output.write('\t')
+
+    output.write('\n')
+
+
 
     for i in range(len(list1)):
             for j in range(len(list1[i])):
-                pass
                 output.write(str(list1[i][j]))    #write函数不能写int类型的参数，所以使用str()转化
                 output.write('\t')   #相当于Tab一下，换一个单元格
             output.write('\n')       #写完一行立马换行
@@ -502,7 +537,6 @@ def generate_table(file_name, list1, list2):
 
     # print the table for Hero-client relation
     output.write('\nHero-Client relation is: \n')
-
     for m in range(len(list2)):
             for n in range(len(list2[m])):
                 output.write(str(list2[m][n]))    #write函数不能写int类型的参数，所以使用str()转化
@@ -612,12 +646,14 @@ def calculate(client_list, hero_num, weekday_hrs,
     # print("tested date id is :{}\n".format(test_day_id))
     first_day_id = calendar.weekday(start_year, start_month, start_day)
 
+    weekday_calendar = get_weekday_calendar(start_year, start_month, start_day, end_year, end_month, end_day)
+
     extreme_final_list = add_front_start_date(first_day_id, first_month_allocation_list)
 
     print("\n extreme_final_list is :\n")
     print(extreme_final_list)
 
-    return scale_factor, extreme_final_list, final_relation_list
+    return weekday_calendar, scale_factor, extreme_final_list, final_relation_list
 
 
 def add_dates_to_extreme_final_list(extreme_final_list, start_year, start_month, start_day, end_year, end_month, end_day):
@@ -626,12 +662,14 @@ def add_dates_to_extreme_final_list(extreme_final_list, start_year, start_month,
 
 if __name__ == '__main__':
     start_year = 2019
-    start_month = 7
-    start_day = 1
+    start_month = 6
+    start_day = 7
 
-    end_year = 2020
+    end_year = 2019
     end_month = 7
-    end_day = 31
+    end_day = 8
+
+    client_list = [179, 160, 150, 80, 70, 62, 50, 45, 39, 32, 28, 25, 16, 10]
 
     client_list = [50, 25, 22, 20,
                    19, 19, 19, 19, 19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,19, 19, 19, 19,
@@ -666,11 +704,11 @@ if __name__ == '__main__':
     hero_num=2
     weekday_hrs=8
 
-    extreme_final_list, hero_client_list = calculate(client_list, hero_num, weekday_hrs,
+    weekday_calendar, scale_factor, extreme_final_list, hero_client_list = calculate(client_list, hero_num, weekday_hrs,
                                                      start_year, start_month, start_day, end_year, end_month, end_day)
 
     # hero_client_list = get_hero_client_relation(extreme_final_list)
 
     file_name = 'results.xls'
 
-    generate_table(file_name, extreme_final_list, hero_client_list)
+    generate_table(file_name, weekday_calendar, extreme_final_list, hero_client_list)

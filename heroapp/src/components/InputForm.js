@@ -29,6 +29,7 @@ class InputForm extends React.Component {
   };
 
   // it works good but I prefer construcutor
+    // "You should not call setState() in componentWillUnmount() because the component will never be re-rendered."
   // componentWillMount () {
   //
   //   if (this.state.startDate) {
@@ -158,88 +159,85 @@ class InputForm extends React.Component {
     return (
       <>
         <div className="container">
-          {/*在同一行*/}
-          <div className="row">
-            {/*在同一列*/}
-            <div className="col-md-8">
-              {/*输入的都遵循form 要求？*/}
-              <form>
-                <br />
-
-                <div>
-                  <label htmlFor="clientTask">Client Task</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="clientTask"
-                    placeholder="Client Task List"
-                    onInput={this.onInputChange}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="heroNum">Hero number</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="heroNum"
-                    placeholder="Input hero number"
-                    onInput={this.onInputChange}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="weekdayHours">Weekday hours</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="weekdayHours"
-                    placeholder="Every weekday working hours"
-                    onInput={this.onInputChange}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="dateRangeSelector">Date Range</label>
-                  <br />
-
-                  <DateRangePicker
-                    displayFormat="MMM DD YYYY"
-                    startDateId="startDate"
-                    endDateId="endDate"
-
-                    startDate={this.state.startDate}
-                    endDate={this.state.endDate}
-
-
-                    onDatesChange={this.handleDateChange}
-                    focusedInput={this.state.focusedInput}
-                    onFocusChange={this.handleFocusChange}
-                    isOutsideRange={this.isOutsideRange}
-                  />
-                </div>
-
-              </form>
+           <form>
+               <br></br>
+            <div className="form-group">
+              <label htmlFor="clientTask">Client task</label>
+              <input
+                type="text"
+                className="form-control"
+                id="clientTask"
+                placeholder="e.g. [120, 110, 15] "
+                onInput={this.onInputChange}
+              />
             </div>
 
-            {/*Go这个button点击就将参数传到后台调API*/}
-            <div className="col-md-4" style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <div style={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
+            <div className="form-group">
+              <label htmlFor="heroNum">Hero number</label>
+              <input
+                type="text"
+                className="form-control"
+                id="heroNum"
+                placeholder="e.g. 10"
+                onInput={this.onInputChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="weekdayHours">Weekday hours</label>
+              <input
+                type="text"
+                className="form-control"
+                id="weekdayHours"
+                placeholder="e.g. 8"
+                onInput={this.onInputChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="dateRangeSelector">Date range</label>
+              <br/>
+              <DateRangePicker
+
+                displayFormat="MMM DD YYYY"
+
+                startDateId="startDate"
+                endDateId="endDate"
+
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+
+                onDatesChange={this.handleDateChange}
+                focusedInput={this.state.focusedInput}
+                onFocusChange={this.handleFocusChange}
+                isOutsideRange={this.isOutsideRange}
+              />
+            </div>
+
+            {/*<div className="form-group">*/}
+                {/*<button type="submit button"*/}
+                        {/*className="btn btn-primary"*/}
+                        {/*onClick={this.submitForm}*/}
+                    {/*>*/}
+                    {/*Get Work Plan!*/}
+                {/*</button>*/}
+            {/*</div>*/}
+
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', flex: 1 }}>
                 <button
-                  //                  ------very important-------
                   onClick={this.submitForm}
                   type="button"
                   className="btn btn-primary"
-                  style={{ paddingLeft: '20px', paddingRight: '20px' }}
+                  // style={{ paddingLeft: '20px', paddingRight: '20px' }}
                 >
-                  Go!
+                  Get Work Plan !
                 </button>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/*why have stringify ?*/}
+           </form>
+        </div>
 
         {/*<div>State: {JSON.stringify(this.state)}</div>*/}
         {/*<div>{JSON.stringify(!!this.state.clientTask)}</div>*/}

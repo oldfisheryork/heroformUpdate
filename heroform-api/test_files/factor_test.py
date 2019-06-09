@@ -22,7 +22,7 @@ import calendar
 # days = np.busday_count(start, end)
 # print("June in 2019 business days is: ")
 
-# test how many days betweeen date
+# get_each_hero_now_month_list how many days betweeen date
 
 
 # day_id from 0 - 6 means Monday - Sunday
@@ -204,7 +204,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
         client_tuple_list[i].append(client_arr[i])
         client_tuple_list[i].append(i)
 
-    # test to print tuple list
+    # get_each_hero_now_month_list to print tuple list
     # print(client_tuple_list)
 
     print("Clients task is : {}".format(client_arr))
@@ -212,7 +212,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
     total_goal = sum(client_arr)
     print("\nTotal required hrs is: {}".format(total_goal))
 
-    # test case if there's too little work, we need to
+    # get_each_hero_now_month_list case if there's too little work, we need to
     # total_each_hero = 5 * 8 * weeks_num * (541 / 960)
     total_each_hero = weekday_hrs * day_num_month
 
@@ -329,7 +329,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
         print("The rest clients need to be allocated is: {}".format(client_tuple_list))
         print()
 
-    # test
+    # get_each_hero_now_month_list
     print("small heroes list is: ")
 
     small_heroes.sort(key=operator.itemgetter(0), reverse=True)

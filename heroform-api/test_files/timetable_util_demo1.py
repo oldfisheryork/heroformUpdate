@@ -78,7 +78,7 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
         client_tuple_list[i].append(client_arr[i])
         client_tuple_list[i].append(i)
 
-    # test to print tuple list
+    # get_each_hero_now_month_list to print tuple list
     # print(client_tuple_list)
 
     print("Clients task is : {}".format(client_arr))
@@ -86,7 +86,7 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
     total_goal = sum(client_arr)
     print("\nTotal required hrs is: {}".format(total_goal))
 
-    # test case if there's too little work, we need to
+    # get_each_hero_now_month_list case if there's too little work, we need to
     # total_each_hero = 5 * 8 * weeks_num * (541 / 960)
     total_each_hero = weekday_hrs * days_per_week * week_num
 
@@ -233,7 +233,7 @@ def get_total_work_plan(client_arr, hero_num, week_num, days_per_week, weekday_h
         print("The rest clients need to be allocated is: {}".format(client_tuple_list))
         print()
 
-    # test
+    # get_each_hero_now_month_list
     print("small heroes list is: ")
 
     small_heroes.sort(key=operator.itemgetter(0), reverse=True)
@@ -372,7 +372,7 @@ def calculate(client_task, hero_num, week_num, day_per_week, weekday_hrs):
 
 
 if __name__ == '__main__':
-    # very good test case, since all 960 960 but in the end algo can'e solve 18 more hrs
+    # very good get_each_hero_now_month_list case, since all 960 960 but in the end algo can'e solve 18 more hrs
     # client_arr = [179, 160, 150, 80, 70, 60, 50, 42, 40, 32, 28, 25, 18, 16, 10]
     # hero_num = 6
     # week_num = 4
@@ -390,7 +390,7 @@ if __name__ == '__main__':
     #
 
 
-    # lots of clients with only little work test case
+    # lots of clients with only little work get_each_hero_now_month_list case
     client_arr = [25, 22, 20, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 10]
     # used to be no good
     hero_num = 6
@@ -413,7 +413,7 @@ if __name__ == '__main__':
     # days_per_week = 5
     # weekday_hrs = 8
 
-    # good test case, finally still have 19 hrs need to be done but no one allocated, hero6 hero7 should do the rest of them
+    # good get_each_hero_now_month_list case, finally still have 19 hrs need to be done but no one allocated, hero6 hero7 should do the rest of them
     # client_arr = [176, 174, 143, 80, 70]
     # hero_num = 8
     # week_num = 4

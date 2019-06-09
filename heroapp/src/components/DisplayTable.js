@@ -118,7 +118,29 @@ class DisplayTable extends Component {
       <>
         <div className="container">
             <br></br>
-          <h3>Work Plan</h3>
+
+          <div>
+            <h3>Work Plan</h3>
+            <p>Date Range : {this.state.startDate}  -  {this.state.endDate} </p>
+            {/*<p></p>*/}
+            <p>Scale Factor : {this.state.scaleFactor}</p>
+          </div>
+
+
+          {/*<div>*/}
+              {/*<div className="col-md-4">*/}
+                {/*<h3>Work Plan</h3>*/}
+              {/*<div>*/}
+              {/*<div className="col-md-4">*/}
+                {/*<p>Start Date : {this.state.startDate} </p>*/}
+              {/*</div>*/}
+              {/*<div className="col-md-4">*/}
+                {/*<p>End Date : {this.state.endDate}</p>*/}
+              {/*</div>*/}
+              {/*<div className="col-md-4">*/}
+                {/*<p>Scale Factor : {this.state.scaleFactor}</p>*/}
+              {/*</div>*/}
+          {/*</div>*/}
 
           <table class="table">
             <thead class="thead-light">
@@ -138,9 +160,6 @@ class DisplayTable extends Component {
 
 
           <div>
-            <p>Start Date : {this.state.startDate} </p>
-            <p>End Date : {this.state.endDate}</p>
-            <p>Scale Factor : {this.state.scaleFactor}</p>
             <p>Total Weeks : {this.state.weeks}</p>
             <p>Current Week : {this.state.currentWeek + 1}</p>
           </div>

@@ -162,7 +162,7 @@ class InputForm extends React.Component {
            <form>
                <br></br>
             <div className="form-group">
-              <label htmlFor="clientTask">Client task</label>
+              <label htmlFor="clientTask">Client list</label>
               <input
                 type="text"
                 className="form-control"
@@ -231,7 +231,7 @@ class InputForm extends React.Component {
                   className="btn btn-primary"
                   // style={{ paddingLeft: '20px', paddingRight: '20px' }}
                 >
-                  Get Work Plan !
+                  Get Work Allocation   !
                 </button>
               </div>
             </div>

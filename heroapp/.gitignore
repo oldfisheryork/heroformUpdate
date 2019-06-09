@@ -15,7 +15,7 @@
 .DS_Store
 .env.local
 .env.development.local
-.env.test.local
+.env.get_each_hero_now_month_list.local
 .env.production.local
 
 npm-debug.log*

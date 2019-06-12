@@ -102,9 +102,9 @@ class InputForm extends React.Component {
   // 重点是submit传到后台吗?
   submitForm = () => {
     if (
-      !!this.state.clientTask &&
-      !!this.state.heroNum &&
-      !!this.state.weekdayHours &&
+        (!!this.state.clientTask && this.state.clientTask.length > 0) &&
+        (!!this.state.heroNum && this.state.heroNum > 0) &&
+        (!!this.state.weekdayHours && this.state.weekdayHours > 0) &&
       !!this.state.startDate &&
       !!this.state.endDate
     ) {
@@ -195,10 +195,11 @@ class InputForm extends React.Component {
             </div>
 
             <div className="form-group">
-              <label htmlFor="dateRangeSelector">Date range</label>
+                {/*htmlFor="dateRangeSelector"*/}
+              <label >Date range</label>
+
               <br/>
               <DateRangePicker
-
                 displayFormat="MMM DD YYYY"
 
                 startDateId="startDate"

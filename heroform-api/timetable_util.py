@@ -99,6 +99,7 @@ def get_weekdays_num_month(start_year, start_month, start_day, end_year, end_mon
 # return scaled_client_list
 def get_scaled_client_list(client_list, month_num, total_days, hero_num, weekday_hrs):
     scaled_client_list = []
+    scale_factor = 1
     available_heroes_total = hero_num * total_days * weekday_hrs
     # sort the input
     client_list.sort(reverse=True)
@@ -118,7 +119,6 @@ def get_scaled_client_list(client_list, month_num, total_days, hero_num, weekday
             new_each_client = math.ceil(scale_factor * each_client)
             scaled_client_list.append(new_each_client)
     else:
-        scale_factor = 1
         scaled_client_list = client_list
 
     print("scaled client list is : {}\n".format(scaled_client_list))
@@ -134,7 +134,6 @@ def get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month,
     final_client_list_now_month = []
 
     available_load = hero_num * day_num_month * weekday_hrs
-
     client_request = sum(scaled_client_list)
 
     if available_load >= client_request:
@@ -156,12 +155,7 @@ def get_final_client_list_now_month(scaled_client_list, hero_num, day_num_month,
 
 
 # print(get_weekdays_num_month(start_year, start_month, start_day, end_year, end_month, end_day))
-
 # new_arr = get_scaled_client_list(client_arr, total_days, hero_num, weekday_hrs, month_num)
-
-# for i in range(6):
-#     print(new_arr[i] / client_arr[i])
-
 
 # for small cases
 def allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan):
@@ -335,21 +329,7 @@ def get_total_work_plan(client_arr, hero_num, day_num_month, weekday_hrs):
         # ########## very important ####2nd sort######
         client_tuple_list.sort(key=operator.itemgetter(0), reverse=True)
 
-        # print("Individual allocation is: {}".format(work_plan[hero_id]))
-        # print("Smaller heroes is: {}".format(small_heroes))
-        # print("The rest clients need to be allocated is: {}\n".format(client_tuple_list))
-
-
-    # get_each_hero_now_month_list
-    # print("small heroes list is: ")
-
     small_heroes.sort(key=operator.itemgetter(0), reverse=True)
-
-    # print(small_heroes)
-
-    # print(finished_client_num)
-    # print("client_tuple_list is : ")
-    # print(client_tuple_list)
 
     updated_work_plan = allocation_for_small_heroes(client_tuple_list, small_heroes, work_plan)
 
@@ -435,9 +415,7 @@ def get_full_allocation_list(total_work_plan, weekday_hrs):
                     # not a list
                     else:
                         del merged_day_client_list[-1]
-                        combined_list = []
-                        combined_list.append(last_ele)
-                        combined_list.append(new_element)
+                        combined_list = [last_ele, new_element]
                         merged_day_client_list.append(combined_list)
                 # different day_id
                 else:
@@ -567,7 +545,7 @@ def calculate(client_list, hero_num, weekday_hrs,
     # fixed, during the time scaled
     scale_factor, scaled_client_list = get_scaled_client_list(client_list, month_num, total_weekdays, hero_num, weekday_hrs)
 
-    detailed_allocation_now_month = []
+    # detailed_allocation_now_month = []
 
     # this is the merged plan
     final_final_allocation_list = []
@@ -665,10 +643,6 @@ def calculate(client_list, hero_num, weekday_hrs,
     return weekday_calendar, scale_factor, extreme_final_list, final_relation_list
 
 
-def add_dates_to_extreme_final_list(extreme_final_list, start_year, start_month, start_day, end_year, end_month, end_day):
-    pass
-
-
 if __name__ == '__main__':
     start_year = 2019
     start_month = 6
@@ -678,7 +652,7 @@ if __name__ == '__main__':
     end_month = 7
     end_day = 31
 
-    client_list = [179, 160, 150, 80, 70, 62, 50, 45, 39, 32, 28, 25, 16, 10]
+    # client_list = [179, 160, 150, 80, 70, 62, 50, 45, 39, 32, 28, 25, 16, 10]
     client_list = [17, 580, 210, 100, 50, 400, 600, 10, 160, 150, 80, 70, 62, 50, 45, 39, 32, 28, 25, 16, 10]
 
     #

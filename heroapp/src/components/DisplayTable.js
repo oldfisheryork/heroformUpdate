@@ -121,9 +121,7 @@ class DisplayTable extends Component {
 
           <div>
             <h3>Work Plan</h3>
-            <p>Date Range : {this.state.startDate}  -  {this.state.endDate} </p>
-            {/*<p></p>*/}
-            <p>Scale Factor : {this.state.scaleFactor}</p>
+
           </div>
 
 
@@ -160,6 +158,8 @@ class DisplayTable extends Component {
 
 
           <div>
+            <p>Date Range : {this.state.startDate}  -  {this.state.endDate} </p>
+            <p>Scale Factor : {this.state.scaleFactor}</p>
             <p>Total Weeks : {this.state.weeks}</p>
             <p>Current Week : {this.state.currentWeek + 1}</p>
           </div>
@@ -171,6 +171,7 @@ class DisplayTable extends Component {
               // class="btn btn-dark"
               className="btn btn-info"
               style={{ marginRight: '20px' }}
+
               onClick={() => {
                 const currentWeek = this.state.currentWeek;
                 if (currentWeek > 0) {
@@ -195,7 +196,6 @@ class DisplayTable extends Component {
               Next Week
             </button>
           </div>
-
         </div>
 
 
